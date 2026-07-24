@@ -2,28 +2,115 @@
    layout.css — ページ全体のグリッドと骨格
    =========================================================== */
 
+/* 夜空をイメージしたヘッダー背景（フェーズ26）。星の瞬きと流れ星はCSSアニメーションのみで、
+   画像・JSは使わない。prefers-reduced-motionでは静止した星空にする。 */
 .site-header {
-  background: var(--color-slate);
+  background: radial-gradient(ellipse at 80% -20%, #16273f 0%, #0b1220 45%, #05070c 100%);
   color: #fff;
   padding: var(--space-6) var(--space-6) var(--space-5);
   position: relative;
   overflow: hidden;
 }
 
-/* 等圧線を思わせる控えめな装飾ライン */
+/* 星: 小さな光点をタイル状に散りばめる。twinkleで明滅させる */
 .site-header::before {
   content: "";
   position: absolute;
   inset: 0;
   background-image:
-    repeating-radial-gradient(
-      circle at 88% -10%,
-      transparent 0,
-      transparent 38px,
-      rgba(28, 124, 140, 0.35) 39px,
-      rgba(28, 124, 140, 0.35) 40px
-    );
+    radial-gradient(1.4px 1.4px at 10% 20%, #fff, transparent 100%),
+    radial-gradient(1px 1px at 25% 65%, #fff, transparent 100%),
+    radial-gradient(1.8px 1.8px at 42% 12%, #fff, transparent 100%),
+    radial-gradient(1px 1px at 58% 48%, rgba(255, 255, 255, 0.85), transparent 100%),
+    radial-gradient(1.3px 1.3px at 73% 28%, #fff, transparent 100%),
+    radial-gradient(1px 1px at 87% 60%, rgba(255, 255, 255, 0.8), transparent 100%),
+    radial-gradient(1.6px 1.6px at 95% 15%, #fff, transparent 100%),
+    radial-gradient(1px 1px at 15% 85%, rgba(255, 255, 255, 0.7), transparent 100%),
+    radial-gradient(1.2px 1.2px at 65% 82%, #fff, transparent 100%),
+    radial-gradient(1px 1px at 33% 38%, rgba(255, 255, 255, 0.75), transparent 100%);
+  background-repeat: repeat;
+  background-size: 340px 220px;
+  opacity: 0.85;
+  animation: site-header-twinkle 5s ease-in-out infinite alternate;
   pointer-events: none;
+}
+
+@keyframes site-header-twinkle {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 流れ星: 尾を引く光の筋。ほとんどの時間は透明で、周期の終わり際に一瞬だけ流れる
+   （＝「たまに流れる」演出）。3本それぞれ長さ・角度・タイミングをずらして自然に見せる */
+.shooting-star {
+  position: absolute;
+  width: 110px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.shooting-star--1 {
+  top: 18%;
+  left: 15%;
+  transform: rotate(35deg);
+  animation: shooting-star-fly 9s linear infinite;
+  animation-delay: -1s;
+}
+
+.shooting-star--2 {
+  top: 55%;
+  left: 60%;
+  width: 80px;
+  transform: rotate(28deg);
+  animation: shooting-star-fly 14s linear infinite;
+  animation-delay: -6s;
+}
+
+.shooting-star--3 {
+  top: 8%;
+  left: 68%;
+  width: 70px;
+  transform: rotate(40deg);
+  animation: shooting-star-fly 17s linear infinite;
+  animation-delay: -11s;
+}
+
+@keyframes shooting-star-fly {
+  0%,
+  92% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  93% {
+    opacity: 1;
+  }
+  97% {
+    opacity: 0;
+    translate: 160px 90px;
+  }
+  100% {
+    opacity: 0;
+    translate: 160px 90px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header::before {
+    animation: none;
+    opacity: 0.85;
+  }
+
+  .shooting-star {
+    animation: none;
+    opacity: 0;
+  }
 }
 
 .site-header__inner {
