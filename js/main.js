@@ -35,7 +35,7 @@ const statusCount = document.getElementById("status-count");
 const exportCsvBtn = document.getElementById("export-csv-btn");
 const copyColabBtn = document.getElementById("copy-colab-btn");
 const listSummary = document.getElementById("list-summary");
-const resetExclusionsBtn = document.getElementById("reset-exclusions-btn");
+const selectAllCb = document.getElementById("select-all-cb");
 
 let elementLabelMap = new Map();
 let regionLabelMap = new Map();
@@ -112,7 +112,7 @@ function includeStation(stationId) {
   setExcluded((set) => set.delete(stationId));
 }
 
-/** 地図のマーカー操作用: 現在の状態に応じて除外/復帰をトグルする。 */
+/** 一覧チェック／地図マーカー操作用: 現在の状態に応じて選択/解除をトグルする。 */
 function toggleStation(stationId) {
   if (store.getState().excludedIds.has(stationId)) {
     includeStation(stationId);
@@ -121,9 +121,15 @@ function toggleStation(stationId) {
   }
 }
 
-/** すべての除外を解除する。 */
-function resetExclusions() {
-  store.setState({ excludedIds: new Set() });
+/** 「表示中をすべて選択」トグル: 現在の絞り込み結果すべてを選択（除外解除）または解除（除外）する。 */
+function setAllVisible(selected) {
+  const state = store.getState();
+  const next = new Set(state.excludedIds);
+  for (const s of state.visibleStations) {
+    if (selected) next.delete(s.id);
+    else next.add(s.id);
+  }
+  store.setState({ excludedIds: next });
 }
 
 /**
@@ -222,7 +228,7 @@ exportCsvBtn.addEventListener("click", () => {
   }
 });
 
-resetExclusionsBtn?.addEventListener("click", resetExclusions);
+selectAllCb?.addEventListener("change", () => setAllVisible(selectAllCb.checked));
 
 /** クリップボードにテキストをコピーする（HTTPSでは navigator.clipboard、非対応時は execCommand にフォールバック）。 */
 async function copyTextToClipboard(text) {
@@ -291,8 +297,9 @@ store.subscribe((state) => {
 
   syncUrlWithState(state); // フェーズ7: 絞り込み条件をURLクエリに反映（履歴は汚さない）
 
-  const listStations = effectiveStations(state); // 除外を差し引いた「観測所一覧（ダウンロード対象）」
-  const { items, page, totalPages, total } = paginate(listStations, state.page, state.pageSize);
+  // チェックボックス方式: 絞り込み結果はすべて表示し、チェックの有無で対象を選ぶ
+  const filtered = state.visibleStations;
+  const { items, page, totalPages, total } = paginate(filtered, state.page, state.pageSize);
   const poolTotal = effectivePool(state).length;
 
   renderStationTable(tableContainer, items, {
@@ -300,7 +307,8 @@ store.subscribe((state) => {
     regionLabelMap,
     selectedStationId: state.selectedStationId,
     onSelectStation: selectStation,
-    onExcludeStation: excludeStation,
+    excludedIds: state.excludedIds,
+    onToggleStation: toggleStation,
   });
 
   renderPagination(paginationContainer, {
@@ -311,24 +319,23 @@ store.subscribe((state) => {
     onPageChange: (nextPage) => store.setState({ page: nextPage, selectedStationId: null }),
   });
 
-  // 除外の件数表示と「除外をリセット」ボタンの出し分け
-  const excludedCount = state.excludedIds?.size ?? 0;
+  // 選択件数の表示と「表示中をすべて選択」チェックの状態
+  const excludedInVisible = filtered.reduce((n, s) => n + (state.excludedIds?.has(s.id) ? 1 : 0), 0);
+  const selectedCount = filtered.length - excludedInVisible;
   if (listSummary) {
-    listSummary.textContent = excludedCount > 0 ? `除外中 ${excludedCount} 件（ダウンロード対象から外れています）` : "";
+    listSummary.textContent = filtered.length > 0 ? `選択 ${selectedCount} / 絞り込み ${filtered.length} 件` : "";
   }
-  if (resetExclusionsBtn) resetExclusionsBtn.hidden = excludedCount === 0;
+  if (selectAllCb) {
+    selectAllCb.checked = filtered.length > 0 && excludedInVisible === 0;
+    selectAllCb.indeterminate = excludedInVisible > 0 && selectedCount > 0;
+  }
 
   if (total === 0) {
-    const base = state.visibleStations.length;
-    statusCount.textContent =
-      base > 0 && excludedCount > 0
-        ? `0 観測所（絞り込み ${base}件はすべて除外中）・全 ${poolTotal} 件中`
-        : `0 観測所を表示中（全 ${poolTotal} 件）`;
+    statusCount.textContent = `0 観測所を表示中（全 ${poolTotal} 件）`;
   } else {
     const start = (page - 1) * state.pageSize + 1;
     const end = Math.min(page * state.pageSize, total);
-    const excludedNote = excludedCount > 0 ? `（除外 ${excludedCount}件を除く）` : "";
-    statusCount.textContent = `${start}〜${end}件 / 一覧 ${total}件${excludedNote}（全 ${poolTotal} 件中）・${page}/${totalPages}ページ`;
+    statusCount.textContent = `${start}〜${end}件 / 絞り込み ${total}件（選択 ${selectedCount}件・全 ${poolTotal} 件中）・${page}/${totalPages}ページ`;
   }
 });
 

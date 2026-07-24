@@ -94,37 +94,35 @@ function renderNameCellWithStatus(station) {
   ]);
 }
 
-/** 地点コードのセル。左端に「一覧から除外する」✕ボタンを添える（除外方式）。
- *  ✕クリックは行選択（行クリック）に伝播させない。 */
-function renderIdCell(station, onExcludeStation) {
-  const removeBtn = h(
-    "button",
-    {
-      type: "button",
-      class: "row-remove",
-      title: `${station.name} を観測所一覧（ダウンロード対象）から除外する`,
-      "aria-label": `${station.name} を一覧から除外`,
-      onClick: (event) => {
-        event.stopPropagation();
-        onExcludeStation?.(station.id);
-      },
+/** 地点コードのセル。左端に「ダウンロード対象に含める」チェックボックスを添える。
+ *  チェックのクリックは行選択（行クリック）に伝播させない。 */
+function renderIdCell(station, isSelected, onToggleStation) {
+  const checkbox = h("input", {
+    type: "checkbox",
+    class: "row-select",
+    title: `${station.name} をダウンロード対象に含める`,
+    "aria-label": `${station.name} をダウンロード対象に含める`,
+    onClick: (event) => {
+      event.stopPropagation();
+      onToggleStation?.(station.id);
     },
-    "✕"
-  );
+  });
+  checkbox.checked = isSelected;
   return h("div", { class: "id-cell" }, [
-    removeBtn,
+    checkbox,
     h("span", { class: "station-table__id mono" }, station.id),
   ]);
 }
 
 /** 行クリック（または行にフォーカスしてEnter/Space）で observeStation を選択状態にする。
  *  地図のマーカーをクリックしたときと同じ store.selectedStationId を介した相互連携（フェーズ15）。 */
-function renderRow(station, elementLabelMap, regionLabelMap, selectedStationId, onSelectStation, onExcludeStation) {
+function renderRow(station, elementLabelMap, regionLabelMap, selectedStationId, onSelectStation, isChecked, onToggleStation) {
   const isSelected = station.id === selectedStationId;
   const selectRow = () => onSelectStation?.(station.id);
   const rowClass = [
     "station-table__row",
     isSelected && "station-table__row--selected",
+    !isChecked && "station-table__row--unchecked",
     station.discontinued && "station-table__row--discontinued",
   ]
     .filter(Boolean)
@@ -144,7 +142,7 @@ function renderRow(station, elementLabelMap, regionLabelMap, selectedStationId, 
       },
     },
     [
-      h("td", {}, renderIdCell(station, onExcludeStation)),
+      h("td", {}, renderIdCell(station, isChecked, onToggleStation)),
       h("td", {}, renderNameCellWithStatus(station)),
       h("td", {}, h("span", { class: "station-table__kana" }, station.kana ?? "")),
       h("td", {}, station.prefecture),
@@ -166,8 +164,9 @@ function formatNumber(value, digits) {
 export function renderStationTable(
   container,
   stations,
-  { elementLabelMap, regionLabelMap, selectedStationId = null, onSelectStation, onExcludeStation } = {}
+  { elementLabelMap, regionLabelMap, selectedStationId = null, onSelectStation, excludedIds = null, onToggleStation } = {}
 ) {
+  const isChecked = (id) => !(excludedIds && excludedIds.has(id));
   container.innerHTML = "";
 
   if (stations.length === 0) {
@@ -192,7 +191,10 @@ export function renderStationTable(
   const tbody = h("tbody", {});
   let selectedRow = null;
   stations.forEach((station) => {
-    const row = renderRow(station, elementLabelMap, regionLabelMap, selectedStationId, onSelectStation, onExcludeStation);
+    const row = renderRow(
+      station, elementLabelMap, regionLabelMap, selectedStationId, onSelectStation,
+      isChecked(station.id), onToggleStation
+    );
     if (station.id === selectedStationId) selectedRow = row;
     tbody.append(row);
   });

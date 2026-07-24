@@ -149,15 +149,14 @@
             <span class="panel__info" tabindex="0">
               <span class="panel__info-icon" aria-hidden="true">i</span>
               <span class="u-visually-hidden">説明を表示</span>
-              <p class="panel__note" role="tooltip">気象庁「アメダス観測所表」に基づく全国1,286地点（気象官署56地点＋アメダス1,230地点）に、南極・昭和基地を加えた1,287地点を収録しています。<strong>地点名をクリックすると、気象庁「過去の気象データ検索」がその地点を選択した状態で開きます</strong>（年月・データ種別を選ぶと日別値・月別値・平年値などを閲覧できます）。地点名の後ろに「*」が付く7地点は、気象庁側に同名で複数の地点番号があり自動判定を保留しているため、都道府県の地点選択ページへ案内します。観測要素は色分けして表示しています（色の対応は「観測要素で絞り込む」の各項目のドットと同じです）。現在は運用されていない過去の観測所506地点も既定で一覧・地図に含まれています（「廃止」タグと観測期間を表示。うち386地点は気象庁ページへのリンクも確認済みです）。含めたくない場合は「廃止済みの観測地点を含めない」をオンにしてください。<strong>各行の地点コード左の「✕」で、その地点を一覧（＝ダウンロード対象）から個別に除外できます。地図のマーカーの吹き出しにある「一覧から外す／戻す」でも同じ調整ができ、除外中の地点は地図上で薄いグレーになります。除外は「除外をリセット」で元に戻せます。</strong></p>
+              <p class="panel__note" role="tooltip">気象庁「アメダス観測所表」に基づく全国1,286地点（気象官署56地点＋アメダス1,230地点）に、南極・昭和基地を加えた1,287地点を収録しています。<strong>地点名をクリックすると、気象庁「過去の気象データ検索」がその地点を選択した状態で開きます</strong>（年月・データ種別を選ぶと日別値・月別値・平年値などを閲覧できます）。地点名の後ろに「*」が付く7地点は、気象庁側に同名で複数の地点番号があり自動判定を保留しているため、都道府県の地点選択ページへ案内します。観測要素は色分けして表示しています（色の対応は「観測要素で絞り込む」の各項目のドットと同じです）。現在は運用されていない過去の観測所506地点も既定で一覧・地図に含まれています（「廃止」タグと観測期間を表示。うち386地点は気象庁ページへのリンクも確認済みです）。含めたくない場合は「廃止済みの観測地点を含めない」をオンにしてください。<strong>各行の左端のチェックボックスで、ダウンロード対象に含める地点を選べます（既定はすべて選択）。上の「表示中をすべて選択」で、絞り込み結果の全チェックをまとめて切り替えられます。地図のマーカーの吹き出しにある「一覧から外す／戻す」でも同じ調整ができ、未選択の地点は地図上で薄いグレーになります。</strong></p>
             </span>
           </h2>
         </div>
         <div class="panel__actions">
+          <label class="select-all"><input type="checkbox" id="select-all-cb" /> 表示中をすべて選択</label>
           <span id="list-summary" class="list-summary" role="status" aria-live="polite"></span>
-          <button type="button" id="reset-exclusions-btn" class="btn btn--secondary btn--small" hidden>除外をリセット</button>
           <button type="button" id="export-csv-btn" class="btn btn--primary">選択結果をCSVでダウンロード</button>
-          <button type="button" id="copy-colab-btn" class="btn btn--secondary" title="現在の一覧をクリップボードにコピーします。Colabのノートブックに貼り付けて使えます（ファイルの保存・アップロード不要）。">Colab用にコピー</button>
           <a id="open-jma-btn" class="btn btn--secondary" href="https://www.data.jma.go.jp/risk/obsdl/index.php" target="_blank" rel="noopener noreferrer">気象庁の公式ページを開く ↗</a>
         </div>
       </div>
@@ -182,27 +181,28 @@
             無料の Google Colab で動く一括ダウンロード用ノートブックをご利用ください。
           </p>
           <ol class="nextstep__steps">
-            <li>下のボタンから Google Colab を開き、セルを実行（▶）する</li>
-            <li>地点リストの渡し方は2通り：<strong>(A)「Colab用にコピー」</strong>を押して、フォームの貼り付け欄に貼る（ファイル保存不要）／<strong>(B)「選択結果をCSVでダウンロード」</strong>で保存したCSVをアップロードする</li>
-            <li>データの種類・観測項目・期間をプルダウンで選んで「ダウンロード開始」を押す</li>
+            <li>上の一覧で、チェックボックスで対象の地点を選ぶ</li>
+            <li><strong>「Colab用にコピー」</strong>を押して地点リストをコピーする</li>
+            <li><strong>「Google Colabで一括ダウンロードを開く」</strong>を押し、セルを実行（▶）する</li>
+            <li>フォームの貼り付け欄に貼り、データの種類・観測項目・期間を選んで「ダウンロード開始」を押す</li>
             <li>自動でダウンロードが進み、最後に結果のZIPが手元に落ちてくる</li>
           </ol>
           <div class="nextstep__actions">
+            <button
+              type="button"
+              id="copy-colab-btn"
+              class="btn btn--secondary btn--lg"
+              title="選択中の地点リストをクリップボードにコピーします。Colabのノートブックの貼り付け欄に貼って使えます。"
+            >Colab用にコピー</button>
             <a
               class="btn btn--primary btn--lg"
               href="https://colab.research.google.com/github/awg-yk/weather-station-finder/blob/main/notebooks/jma_bulk_download.ipynb"
               target="_blank"
               rel="noopener noreferrer"
             >Google Colabで一括ダウンロードを開く ↗</a>
-            <a
-              class="btn btn--secondary"
-              href="https://github.com/awg-yk/weather-station-finder/blob/main/notebooks/jma_bulk_download.ipynb"
-              target="_blank"
-              rel="noopener noreferrer"
-            >ノートブックの中身をGitHubで見る ↗</a>
           </div>
           <p class="nextstep__hint">
-            ※ 気象庁のサーバーに負荷をかけないよう、データは1件ずつ間隔（既定3秒）を空けて取得します。
+            ※ 気象庁のサーバーに負荷をかけないよう、データは1件ずつ間隔（3秒）を空けて取得します。
             Googleアカウントでのログインが必要です（Colabの利用は無料）。
           </p>
         </div>
