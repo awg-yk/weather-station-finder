@@ -60,7 +60,7 @@ except ImportError:
     raise SystemExit("beautifulsoup4 が必要です: pip install beautifulsoup4")
 
 BASE_URL = "https://www.data.jma.go.jp/obd/stats/etrn/select/prefecture.php"
-USER_AGENT = "amedas-finder-data-tool/1.0 (research use; contact via GitHub repo)"
+USER_AGENT = "weather-station-finder-data-tool/1.0 (research use; contact via GitHub repo)"
 
 # 気象庁 precNo（都府県・地方番号）一覧。
 # 北海道は14地方（宗谷・上川・留萌・石狩・空知・後志・網走／北見／紋別・根室・
