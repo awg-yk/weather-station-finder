@@ -1,5 +1,5 @@
 {
-  "name": "weather-station-finder",
+  "name": "amedas-finder",
   "version": "1.0.0",
   "description": "気象庁の過去の気象データ・ダウンロードを研究・解析向けに使いやすくするための非公式ツール",
   "scripts": {

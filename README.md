@@ -217,7 +217,7 @@
 `fetch("data/stations.json")` が失敗します。必ず簡易サーバー経由で開いてください。
 
 ```bash
-cd weather-station-finder
+cd AMeDAS-finder
 python3 -m http.server 8000
 # その後ブラウザで http://localhost:8000 を開く
 ```
@@ -233,7 +233,7 @@ Node.js がある場合は `npx serve` でも構いません。
 `test-integration-smoke.mjs`）。
 
 ```bash
-cd weather-station-finder
+cd AMeDAS-finder
 npm install
 npm test
 ```
@@ -241,7 +241,7 @@ npm test
 ## ファイル構成
 
 ```
-weather-station-finder/
+AMeDAS-finder/
 ├── index.html              # ページ本体
 ├── vendor/
 │   └── leaflet/            # Leaflet / Leaflet.markercluster の同梱ファイル（npm配布物。フェーズ18でCDN依存を解消）
