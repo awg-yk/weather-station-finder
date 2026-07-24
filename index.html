@@ -157,6 +157,7 @@
           <span id="list-summary" class="list-summary" role="status" aria-live="polite"></span>
           <button type="button" id="reset-exclusions-btn" class="btn btn--secondary btn--small" hidden>除外をリセット</button>
           <button type="button" id="export-csv-btn" class="btn btn--primary">選択結果をCSVでダウンロード</button>
+          <button type="button" id="copy-colab-btn" class="btn btn--secondary" title="現在の一覧をクリップボードにコピーします。Colabのノートブックに貼り付けて使えます（ファイルの保存・アップロード不要）。">Colab用にコピー</button>
           <a id="open-jma-btn" class="btn btn--secondary" href="https://www.data.jma.go.jp/risk/obsdl/index.php" target="_blank" rel="noopener noreferrer">気象庁の公式ページを開く ↗</a>
         </div>
       </div>
@@ -181,9 +182,9 @@
             無料の Google Colab で動く一括ダウンロード用ノートブックをご利用ください。
           </p>
           <ol class="nextstep__steps">
-            <li>上の「選択結果をCSVでダウンロード」で地点リストCSVを保存する</li>
             <li>下のボタンから Google Colab を開き、セルを実行（▶）する</li>
-            <li>案内に従ってCSVをアップロードし、データの種類・観測項目・期間を選ぶ</li>
+            <li>地点リストの渡し方は2通り：<strong>(A)「Colab用にコピー」</strong>を押して、フォームの貼り付け欄に貼る（ファイル保存不要）／<strong>(B)「選択結果をCSVでダウンロード」</strong>で保存したCSVをアップロードする</li>
+            <li>データの種類・観測項目・期間をプルダウンで選んで「ダウンロード開始」を押す</li>
             <li>自動でダウンロードが進み、最後に結果のZIPが手元に落ちてくる</li>
           </ol>
           <div class="nextstep__actions">

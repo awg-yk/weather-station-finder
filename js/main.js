@@ -18,7 +18,7 @@ import { initDiscontinuedFilter } from "./modules/discontinuedFilter.js";
 import { initKeywordSearch } from "./modules/keywordSearch.js";
 import { paginate, renderPagination } from "./modules/pagination.js";
 import { computeVisibleStations, buildFacetCounts, buildStationTypeCounts } from "./modules/filterEngine.js";
-import { exportStationsAsCSV } from "./modules/exporter.js";
+import { exportStationsAsCSV, stationsToCsv } from "./modules/exporter.js";
 import { initMapView } from "./modules/mapView.js";
 import { parseStateFromUrl, syncUrlWithState } from "./modules/urlState.js";
 import { buildElementLabelMap, buildRegionLabelMap } from "./utils/helpers.js";
@@ -33,6 +33,7 @@ const keywordSearchContainer = document.getElementById("keyword-search-container
 const mapViewContainer = document.getElementById("map-view-container");
 const statusCount = document.getElementById("status-count");
 const exportCsvBtn = document.getElementById("export-csv-btn");
+const copyColabBtn = document.getElementById("copy-colab-btn");
 const listSummary = document.getElementById("list-summary");
 const resetExclusionsBtn = document.getElementById("reset-exclusions-btn");
 
@@ -222,6 +223,55 @@ exportCsvBtn.addEventListener("click", () => {
 });
 
 resetExclusionsBtn?.addEventListener("click", resetExclusions);
+
+/** クリップボードにテキストをコピーする（HTTPSでは navigator.clipboard、非対応時は execCommand にフォールバック）。 */
+async function copyTextToClipboard(text) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {
+    /* フォールバックへ */
+  }
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.append(ta);
+    ta.focus();
+    ta.select();
+    const ok = document.execCommand("copy");
+    ta.remove();
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+/** 現在の観測所一覧（除外を反映）を、ダウンロードと同じCSV形式でクリップボードへコピーする。
+ *  Colabのノートブックに貼り付ければ、ファイルの保存・アップロードなしで地点リストを渡せる（③）。 */
+copyColabBtn?.addEventListener("click", async () => {
+  const list = effectiveStations(store.getState());
+  if (list.length === 0) {
+    flashButton(copyColabBtn, "対象がありません", "Colab用にコピー");
+    return;
+  }
+  const csv = stationsToCsv(list, { elementLabelMap, regionLabelMap });
+  const ok = await copyTextToClipboard(csv);
+  flashButton(copyColabBtn, ok ? `コピーしました（${list.length}件）` : "コピーに失敗しました", "Colab用にコピー");
+});
+
+/** ボタンのラベルを一時的に切り替えて操作結果を知らせる。 */
+function flashButton(button, message, restore) {
+  button.textContent = message;
+  button.disabled = true;
+  setTimeout(() => {
+    button.textContent = restore;
+    button.disabled = false;
+  }, 1800);
+}
 
 // store の状態が変わるたびに一覧・ページネーションを再描画する
 store.subscribe((state) => {
