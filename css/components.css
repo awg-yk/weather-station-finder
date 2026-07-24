@@ -542,6 +542,78 @@
   font-size: 11px;
 }
 
+.btn--lg {
+  font-size: 13px;
+  padding: 10px 18px;
+}
+
+
+/* ---------------------------------------------------------
+   次のステップ案内（Colab連携ガイド）
+   --------------------------------------------------------- */
+
+.nextstep {
+  background: var(--color-teal-soft);
+  border: 1px solid var(--color-teal);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+}
+
+.nextstep__intro {
+  margin: 0 0 var(--space-3);
+  font-size: 13px;
+  color: var(--color-slate-soft);
+  line-height: 1.7;
+}
+
+.nextstep__steps {
+  list-style: none;
+  counter-reset: nextstep;
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.nextstep__steps li {
+  counter-increment: nextstep;
+  position: relative;
+  padding-left: 34px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--color-ink);
+}
+
+.nextstep__steps li::before {
+  content: counter(nextstep);
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-teal);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nextstep__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.nextstep__hint {
+  margin: var(--space-3) 0 0;
+  font-size: 11px;
+  color: var(--color-ink-soft);
+}
+
 
 /* ---------------------------------------------------------
    keyword search（フェーズ5・UI/UXブラッシュアップ）

@@ -166,6 +166,46 @@
       </div>
     </section>
 
+    <section class="panel">
+      <div class="panel__header">
+        <h2 class="panel__title">次のステップ：Colabで観測データを一括ダウンロード</h2>
+        <p class="panel__note">上でダウンロードした地点リストCSVを使って、選んだ地点の「気温・降水量・風」などの観測データ本体を、期間を指定してまとめて取得できます。プログラミングの知識がなくても、ブラウザだけで実行できます。</p>
+      </div>
+      <div class="panel__body">
+        <div class="nextstep">
+          <p class="nextstep__intro">
+            この観測所ファインダーは「どの地点を対象にするか」を選ぶツールです。
+            選んだ地点の<strong>実際の観測データ（気温・降水量・積雪など）を期間指定でまとめて取得</strong>するには、
+            無料の Google Colab で動く一括ダウンロード用ノートブックをご利用ください。
+          </p>
+          <ol class="nextstep__steps">
+            <li>上の「選択結果をCSVでダウンロード」で地点リストCSVを保存する</li>
+            <li>下のボタンから Google Colab を開き、セルを実行（▶）する</li>
+            <li>案内に従ってCSVをアップロードし、データの種類・観測項目・期間を選ぶ</li>
+            <li>自動でダウンロードが進み、最後に結果のZIPが手元に落ちてくる</li>
+          </ol>
+          <div class="nextstep__actions">
+            <a
+              class="btn btn--primary btn--lg"
+              href="https://colab.research.google.com/github/awg-yk/weather-station-finder/blob/main/notebooks/jma_bulk_download.ipynb"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Google Colabで一括ダウンロードを開く ↗</a>
+            <a
+              class="btn btn--secondary"
+              href="https://github.com/awg-yk/weather-station-finder/blob/main/notebooks/jma_bulk_download.ipynb"
+              target="_blank"
+              rel="noopener noreferrer"
+            >ノートブックの中身をGitHubで見る ↗</a>
+          </div>
+          <p class="nextstep__hint">
+            ※ 気象庁のサーバーに負荷をかけないよう、データは1件ずつ間隔（既定3秒）を空けて取得します。
+            Googleアカウントでのログインが必要です（Colabの利用は無料）。
+          </p>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <footer class="site-footer">
