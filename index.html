@@ -149,11 +149,13 @@
             <span class="panel__info" tabindex="0">
               <span class="panel__info-icon" aria-hidden="true">i</span>
               <span class="u-visually-hidden">説明を表示</span>
-              <p class="panel__note" role="tooltip">気象庁「アメダス観測所表」に基づく全国1,286地点（気象官署56地点＋アメダス1,230地点）に、南極・昭和基地を加えた1,287地点を収録しています。<strong>地点名をクリックすると、気象庁「過去の気象データ検索」がその地点を選択した状態で開きます</strong>（年月・データ種別を選ぶと日別値・月別値・平年値などを閲覧できます）。地点名の後ろに「*」が付く7地点は、気象庁側に同名で複数の地点番号があり自動判定を保留しているため、都道府県の地点選択ページへ案内します。観測要素は色分けして表示しています（色の対応は「観測要素で絞り込む」の各項目のドットと同じです）。現在は運用されていない過去の観測所506地点も既定で一覧・地図に含まれています（「廃止」タグと観測期間を表示。うち386地点は気象庁ページへのリンクも確認済みです）。含めたくない場合は「廃止済みの観測地点を含めない」をオンにしてください。</p>
+              <p class="panel__note" role="tooltip">気象庁「アメダス観測所表」に基づく全国1,286地点（気象官署56地点＋アメダス1,230地点）に、南極・昭和基地を加えた1,287地点を収録しています。<strong>地点名をクリックすると、気象庁「過去の気象データ検索」がその地点を選択した状態で開きます</strong>（年月・データ種別を選ぶと日別値・月別値・平年値などを閲覧できます）。地点名の後ろに「*」が付く7地点は、気象庁側に同名で複数の地点番号があり自動判定を保留しているため、都道府県の地点選択ページへ案内します。観測要素は色分けして表示しています（色の対応は「観測要素で絞り込む」の各項目のドットと同じです）。現在は運用されていない過去の観測所506地点も既定で一覧・地図に含まれています（「廃止」タグと観測期間を表示。うち386地点は気象庁ページへのリンクも確認済みです）。含めたくない場合は「廃止済みの観測地点を含めない」をオンにしてください。<strong>各行の地点コード左の「✕」で、その地点を一覧（＝ダウンロード対象）から個別に除外できます。地図のマーカーの吹き出しにある「一覧から外す／戻す」でも同じ調整ができ、除外中の地点は地図上で薄いグレーになります。除外は「除外をリセット」で元に戻せます。</strong></p>
             </span>
           </h2>
         </div>
         <div class="panel__actions">
+          <span id="list-summary" class="list-summary" role="status" aria-live="polite"></span>
+          <button type="button" id="reset-exclusions-btn" class="btn btn--secondary btn--small" hidden>除外をリセット</button>
           <button type="button" id="export-csv-btn" class="btn btn--primary">選択結果をCSVでダウンロード</button>
           <a id="open-jma-btn" class="btn btn--secondary" href="https://www.data.jma.go.jp/risk/obsdl/index.php" target="_blank" rel="noopener noreferrer">気象庁の公式ページを開く ↗</a>
         </div>

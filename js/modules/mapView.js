@@ -253,13 +253,22 @@ function setupGestureHandling({ map, container, showHint }) {
  * @param {Map} opts.elementLabelMap - 観測要素ID→日本語ラベルの辞書
  * @returns {Object|null} Leaflet map インスタンス（Leaflet未読み込み時はnull）
  */
-export function initMapView({ container, store, elementLabelMap }) {
+export function initMapView({ container, store, elementLabelMap, onToggleStation }) {
   const onSelectStation = (id) => {
     const state = store.getState();
     const index = state.visibleStations.findIndex((s) => s.id === id);
     const page = index === -1 ? state.page : Math.floor(index / state.pageSize) + 1;
     store.setState({ selectedStationId: id, page });
   };
+
+  /** マーカーを「除外中（薄いグレー）」/「一覧に含む（通常色）」で塗り分ける。 */
+  function applyExcludedStyle(marker, station, isExcluded) {
+    marker.setStyle(
+      isExcluded
+        ? { fillColor: DISCONTINUED_MARKER_COLOR, fillOpacity: 0.2 }
+        : { fillColor: getMarkerColor(station), fillOpacity: 0.9 }
+    );
+  }
 
   if (typeof window === "undefined" || !window.L) {
     container.innerHTML =
@@ -294,7 +303,31 @@ export function initMapView({ container, store, elementLabelMap }) {
   let lastVisibleStations = null;
   let lastValidStations = []; // 「検索結果に合わせる」ボタン用に、現在描画中の観測所を保持する
   let markerById = new Map(); // 一覧の行選択との相互連携用（フェーズ15）。render()のたびに作り直す
+  let stationById = new Map(); // 除外スタイル更新用に id→station を保持する
   let selectedMarker = null;
+
+  /** ポップアップに「一覧から外す／戻す」トグルボタンを差し込む（除外方式・②）。
+   *  buildPopupHtml（テスト対象の純粋関数）は変更せず、ポップアップを開いたときにDOMへ追加する。 */
+  function attachToggleButton(popupEl, station) {
+    if (!popupEl || !onToggleStation) return;
+    const body = popupEl.querySelector(".map-popup");
+    if (!body) return;
+    const isExcluded = store.getState().excludedIds?.has(station.id);
+    const label = () => (store.getState().excludedIds?.has(station.id) ? "＋ 一覧に戻す" : "✕ 一覧から外す");
+    let btn = body.querySelector(".map-popup__toggle");
+    if (!btn) {
+      btn = document.createElement("button");
+      btn.type = "button";
+      btn.addEventListener("click", () => {
+        onToggleStation(station.id);
+        btn.textContent = label();
+        btn.classList.toggle("is-add", Boolean(store.getState().excludedIds?.has(station.id)));
+      });
+      body.append(btn);
+    }
+    btn.className = "map-popup__toggle" + (isExcluded ? " is-add" : "");
+    btn.textContent = label();
+  }
 
   /** 現在描画中の観測所がすべて収まるように表示範囲を合わせる */
   function fitToRenderedStations({ maxZoom = 9 } = {}) {
@@ -335,25 +368,42 @@ export function initMapView({ container, store, elementLabelMap }) {
   function render(stations, isFiltered) {
     markerLayer.clearLayers();
     markerById = new Map();
+    stationById = new Map();
     selectedMarker = null;
 
+    const excluded = store.getState().excludedIds ?? new Set();
     lastValidStations = stations.filter((s) => typeof s.lat === "number" && typeof s.lon === "number");
 
     lastValidStations.forEach((station) => {
+      const isExcluded = excluded.has(station.id);
       const marker = L.circleMarker([station.lat, station.lon], {
         radius: 6,
         color: "#fff",
         weight: 1,
-        fillColor: getMarkerColor(station),
-        fillOpacity: 0.9,
+        fillColor: isExcluded ? DISCONTINUED_MARKER_COLOR : getMarkerColor(station),
+        fillOpacity: isExcluded ? 0.2 : 0.9,
       });
       marker.bindPopup(buildPopupHtml(station, { elementLabelMap }), { maxWidth: 260 });
       marker.on("click", () => onSelectStation(station.id));
+      marker.on("popupopen", (e) => attachToggleButton(e.popup.getElement(), station));
       markerById.set(station.id, marker);
+      stationById.set(station.id, station);
       markerLayer.addLayer(marker);
     });
 
     if (isFiltered) fitToRenderedStations();
+  }
+
+  /** 除外集合が変わったとき、変化したマーカーだけ塗り分けを更新する（全再描画は避ける）。 */
+  function updateExcludedStyles(prev, next) {
+    const changed = new Set();
+    prev.forEach((id) => next.has(id) || changed.add(id));
+    next.forEach((id) => prev.has(id) || changed.add(id));
+    changed.forEach((id) => {
+      const marker = markerById.get(id);
+      const station = stationById.get(id);
+      if (marker && station) applyExcludedStyle(marker, station, next.has(id));
+    });
   }
 
   /**
@@ -383,11 +433,18 @@ export function initMapView({ container, store, elementLabelMap }) {
   }
 
   let lastSelectedStationId = null;
+  let lastExcludedIds = store.getState().excludedIds ?? new Set();
   store.subscribe((state) => {
     if (state.status !== "ready") return;
     if (state.visibleStations !== lastVisibleStations) {
       lastVisibleStations = state.visibleStations;
       render(state.visibleStations, hasActiveFilters(state));
+      lastExcludedIds = state.excludedIds ?? new Set(); // 再描画時に反映済みなので基準を更新
+    } else if (state.excludedIds !== lastExcludedIds) {
+      // 絞り込みは変わらず除外だけ変化 → 該当マーカーの塗り分けだけ更新する
+      const prev = lastExcludedIds;
+      lastExcludedIds = state.excludedIds ?? new Set();
+      updateExcludedStyles(prev, lastExcludedIds);
     }
     if (state.selectedStationId !== lastSelectedStationId) {
       lastSelectedStationId = state.selectedStationId;

@@ -94,9 +94,32 @@ function renderNameCellWithStatus(station) {
   ]);
 }
 
+/** 地点コードのセル。左端に「一覧から除外する」✕ボタンを添える（除外方式）。
+ *  ✕クリックは行選択（行クリック）に伝播させない。 */
+function renderIdCell(station, onExcludeStation) {
+  const removeBtn = h(
+    "button",
+    {
+      type: "button",
+      class: "row-remove",
+      title: `${station.name} を観測所一覧（ダウンロード対象）から除外する`,
+      "aria-label": `${station.name} を一覧から除外`,
+      onClick: (event) => {
+        event.stopPropagation();
+        onExcludeStation?.(station.id);
+      },
+    },
+    "✕"
+  );
+  return h("div", { class: "id-cell" }, [
+    removeBtn,
+    h("span", { class: "station-table__id mono" }, station.id),
+  ]);
+}
+
 /** 行クリック（または行にフォーカスしてEnter/Space）で observeStation を選択状態にする。
  *  地図のマーカーをクリックしたときと同じ store.selectedStationId を介した相互連携（フェーズ15）。 */
-function renderRow(station, elementLabelMap, regionLabelMap, selectedStationId, onSelectStation) {
+function renderRow(station, elementLabelMap, regionLabelMap, selectedStationId, onSelectStation, onExcludeStation) {
   const isSelected = station.id === selectedStationId;
   const selectRow = () => onSelectStation?.(station.id);
   const rowClass = [
@@ -121,7 +144,7 @@ function renderRow(station, elementLabelMap, regionLabelMap, selectedStationId, 
       },
     },
     [
-      h("td", {}, h("span", { class: "station-table__id mono" }, station.id)),
+      h("td", {}, renderIdCell(station, onExcludeStation)),
       h("td", {}, renderNameCellWithStatus(station)),
       h("td", {}, h("span", { class: "station-table__kana" }, station.kana ?? "")),
       h("td", {}, station.prefecture),
@@ -143,7 +166,7 @@ function formatNumber(value, digits) {
 export function renderStationTable(
   container,
   stations,
-  { elementLabelMap, regionLabelMap, selectedStationId = null, onSelectStation } = {}
+  { elementLabelMap, regionLabelMap, selectedStationId = null, onSelectStation, onExcludeStation } = {}
 ) {
   container.innerHTML = "";
 
@@ -169,7 +192,7 @@ export function renderStationTable(
   const tbody = h("tbody", {});
   let selectedRow = null;
   stations.forEach((station) => {
-    const row = renderRow(station, elementLabelMap, regionLabelMap, selectedStationId, onSelectStation);
+    const row = renderRow(station, elementLabelMap, regionLabelMap, selectedStationId, onSelectStation, onExcludeStation);
     if (station.id === selectedStationId) selectedRow = row;
     tbody.append(row);
   });
