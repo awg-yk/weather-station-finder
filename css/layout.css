@@ -87,11 +87,12 @@
   margin-bottom: var(--space-4);
 }
 
+/* align-items:stretch（既定値）により、観測要素パネルの高さが種別・廃止済み観測所
+   パネルを縦積みにした右列の高さと揃う（フェーズ25）。 */
 .filter-panels__row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-4);
-  align-items: start;
 }
 
 .filter-panels__row-right {

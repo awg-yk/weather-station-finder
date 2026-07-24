@@ -147,14 +147,9 @@ clearButton.dispatchEvent(new dom.window.Event("click"));
   assert(allAreas.every((area) => lastSelected2.has(area)), "選択された値は地域名（宗谷・上川等）");
   assert(!lastSelected2.has("北海道"), "都道府県名「北海道」そのものは選択値に含まれない");
 
-  // 沖縄・南極は同じグリッド列に重ねて表示される
-  const okinawaGroup = container2.querySelector("#region-okinawa");
-  const antarcticaGroup = container2.querySelector("#region-antarctica");
-  assert(
-    okinawaGroup.closest(".region-group-stack") &&
-      okinawaGroup.closest(".region-group-stack") === antarcticaGroup.closest(".region-group-stack"),
-    "沖縄・南極は同じ .region-group-stack 内に重ねて表示される"
-  );
+  // 沖縄・南極も他の地方と同じ大きさのカードとして描画される（フェーズ25で重ね表示を廃止）
+  assert(!!container2.querySelector("#region-okinawa"), "沖縄のカードが描画される");
+  assert(!!container2.querySelector("#region-antarctica"), "南極のカードが描画される");
 
   regionSelector2.updateCounts(new Map([["宗谷", 5]]));
   assert(

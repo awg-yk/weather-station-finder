@@ -26,41 +26,25 @@
  * （フェーズ23で導入・フェーズ24で2枚組から1枚に統合。station.prefecture自体は「北海道」の
  * まま変わらず、filterEngine.js の regionSelectorKey() が北海道の観測所をprecNoから
  * 地域名に変換して照合する）。
- * また沖縄・南極は選択肢が1件ずつしかなく縦に短いため、同じグリッド列内に半分の高さで
- * 上下に重ねて表示する。
  */
 
 import { h } from "../utils/helpers.js";
 
-/** 北海道の地域カードを1枚にまとめ、沖縄・南極を1列に重ねられるよう並べ替えた表示用リストを作る */
+/** 北海道の地域カードを1枚にまとめた表示用リストを作る */
 function buildDisplayRegions(regions, hokkaidoSubAreas) {
-  const expanded = regions.flatMap((region) => {
+  return regions.flatMap((region) => {
     if (region.id === "hokkaido" && hokkaidoSubAreas && hokkaidoSubAreas.length > 0) {
       const allAreas = hokkaidoSubAreas.flatMap((sub) => sub.areas);
       return [{ id: region.id, name: region.name, prefectures: allAreas }];
     }
     return [region];
   });
-
-  const items = [];
-  for (let i = 0; i < expanded.length; i++) {
-    const region = expanded[i];
-    const next = expanded[i + 1];
-    if (region.id === "okinawa" && next?.id === "antarctica") {
-      items.push({ type: "stack", regions: [region, next] });
-      i++; // antarcticaは既にstackへ含めたのでスキップ
-    } else {
-      items.push({ type: "single", regions: [region] });
-    }
-  }
-  return items;
 }
 
 export function initRegionSelector({ container, regions, hokkaidoSubAreas, stationCounts, initialSelected, onChange }) {
   container.innerHTML = "";
 
-  const displayItems = buildDisplayRegions(regions, hokkaidoSubAreas);
-  const displayRegions = displayItems.flatMap((item) => item.regions); // 一括選択・件数集計はこの単位で行う
+  const displayRegions = buildDisplayRegions(regions, hokkaidoSubAreas);
 
   const selected = new Set(initialSelected ?? []); // 選択中の都道府県名（北海道は地域名）
   const prefectureCheckboxes = new Map(); // prefName -> <input>
@@ -186,7 +170,7 @@ export function initRegionSelector({ container, regions, hokkaidoSubAreas, stati
   // --- 地方ごとのグループ ---------------------------------------------
   const list = h("div", { class: "region-list" });
 
-  /** 1地域（地方 / 北海道の分割地域 / 沖縄・南極）分のカードDOMを作る */
+  /** 1地域（地方 / 北海道）分のカードDOMを作る */
   function buildRegionGroup(region) {
     const groupId = `region-${region.id}`;
     const group = h("div", { class: "region-group" });
@@ -262,19 +246,7 @@ export function initRegionSelector({ container, regions, hokkaidoSubAreas, stati
     return group;
   }
 
-  // 沖縄・南極は選択肢が1件ずつで縦に短いため、1グリッド列の中に半分の高さで重ねて表示する（フェーズ23）
-  displayItems.forEach((item) => {
-    if (item.type === "stack") {
-      const stack = h(
-        "div",
-        { class: "region-group-stack" },
-        item.regions.map((region) => buildRegionGroup(region))
-      );
-      list.append(stack);
-    } else {
-      list.append(buildRegionGroup(item.regions[0]));
-    }
-  });
+  displayRegions.forEach((region) => list.append(buildRegionGroup(region)));
 
   container.append(list);
   refreshDerivedStates();

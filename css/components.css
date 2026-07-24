@@ -257,13 +257,6 @@
   }
 }
 
-/* 沖縄・南極（各1選択肢だけで縦に短い）を1列にまとめて重ねて表示する（フェーズ23） */
-.region-group-stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
 .region-group {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
