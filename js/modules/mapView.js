@@ -253,7 +253,7 @@ function setupGestureHandling({ map, container, showHint }) {
  * @param {Map} opts.elementLabelMap - 観測要素ID→日本語ラベルの辞書
  * @returns {Object|null} Leaflet map インスタンス（Leaflet未読み込み時はnull）
  */
-export function initMapView({ container, store, elementLabelMap, onToggleStation, onSetExcluded }) {
+export function initMapView({ container, store, elementLabelMap, onToggleStation, onSetSelected }) {
   const onSelectStation = (id) => {
     const state = store.getState();
     const index = state.visibleStations.findIndex((s) => s.id === id);
@@ -291,20 +291,20 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
         maxClusterRadius: 50,
         disableClusteringAtZoom: 12,
         spiderfyOnMaxZoom: true,
-        zoomToBoundsOnClick: false, // ② クラスタのクリックはズームではなく一括除外に使う
+        zoomToBoundsOnClick: false, // クラスタのクリックはズームではなく一括選択に使う
       })
     : L.layerGroup();
   markerLayer.addTo(map);
 
-  // ② 数字（クラスタ）をクリックすると、その中の地点をまとめて対象から外す／戻す。
-  //   1つでも選択中があれば全部外し、すべて外れていれば全部戻す（東京の島などを一括操作できる）。
+  // 数字（クラスタ）をクリックすると、その中の地点をまとめて選択／解除する。
+  //   1つでも未選択があれば全部選択、すべて選択済みなら全部解除（東京の島などを一括で追加できる）。
   if (hasCluster) {
     markerLayer.on("clusterclick", (e) => {
       const ids = e.layer.getAllChildMarkers().map((m) => m.stationId).filter(Boolean);
-      if (!ids.length || !onSetExcluded) return;
-      const excluded = store.getState().excludedIds ?? new Set();
-      const anySelected = ids.some((id) => !excluded.has(id));
-      onSetExcluded(ids, anySelected);
+      if (!ids.length || !onSetSelected) return;
+      const selected = store.getState().selectedIds ?? new Set();
+      const anyUnselected = ids.some((id) => !selected.has(id));
+      onSetSelected(ids, anyUnselected);
     });
   }
 
@@ -350,49 +350,57 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
    *   廃止済み観測所は既定で含まれるが、それ自体はユーザーによる「絞り込み」ではないので、
    *   isFilteredの判定には含めない（地域・観測要素・種別・検索語の実際の選択状態だけで判定する）。
    */
+  /** マーカーを「選択中（濃い＝type色）」/「未選択（薄い）」で塗り分ける。 */
+  function styleMarker(marker, station, isSelected) {
+    marker.setStyle({
+      fillColor: getMarkerColor(station),
+      fillOpacity: isSelected ? 0.95 : 0.25,
+      color: isSelected ? "#1B1F23" : "#fff",
+      weight: isSelected ? 2 : 1,
+    });
+  }
+
   function render(stations, isFiltered) {
     markerLayer.clearLayers();
     markerById = new Map();
     stationById = new Map();
     selectedMarker = null;
 
-    const excluded = store.getState().excludedIds ?? new Set();
+    const selected = store.getState().selectedIds ?? new Set();
     lastValidStations = stations.filter((s) => typeof s.lat === "number" && typeof s.lon === "number");
 
     lastValidStations.forEach((station) => {
+      const isSelected = selected.has(station.id);
       const marker = L.circleMarker([station.lat, station.lon], {
         radius: 6,
-        color: "#fff",
-        weight: 1,
+        color: isSelected ? "#1B1F23" : "#fff",
+        weight: isSelected ? 2 : 1,
         fillColor: getMarkerColor(station),
-        fillOpacity: 0.9,
+        fillOpacity: isSelected ? 0.95 : 0.25,
       });
       marker.bindPopup(buildPopupHtml(station, { elementLabelMap }), { maxWidth: 260 });
       marker.stationId = station.id;
       // ③ カーソルを乗せると地点情報のポップアップを表示する
       marker.on("mouseover", () => marker.openPopup());
-      // ①② マーカークリックで対象から直接「外す」。一覧はスクロールさせない
-      //   （連続して外しやすいよう、選択・ページ移動はしない）。
+      // 全地点を未選択で表示し、クリックで選択に追加／解除する（一覧はスクロールさせない）
       marker.on("click", () => onToggleStation?.(station.id));
       markerById.set(station.id, marker);
       stationById.set(station.id, station);
-      // ① 除外された地点は地図に載せない（クラスタの数字も選択中の数だけになる）
-      if (!excluded.has(station.id)) markerLayer.addLayer(marker);
+      markerLayer.addLayer(marker); // すべての地点を地図に表示する（未選択も薄く表示）
     });
 
     if (isFiltered) fitToRenderedStations();
   }
 
-  /** 除外集合が変わったとき、変化したマーカーだけ地図から出し入れする（除外＝非表示）。 */
-  function updateExcludedMembership(prev, next) {
+  /** 選択集合が変わったとき、変化したマーカーだけ塗り分けを更新する（全再描画は避ける）。 */
+  function updateSelectedStyles(prev, next) {
     const changed = new Set();
     prev.forEach((id) => next.has(id) || changed.add(id));
     next.forEach((id) => prev.has(id) || changed.add(id));
     changed.forEach((id) => {
       const marker = markerById.get(id);
-      if (!marker) return;
-      if (next.has(id)) markerLayer.removeLayer(marker); // 除外 → 非表示
-      else markerLayer.addLayer(marker); // 選択に戻す → 再表示
+      const station = stationById.get(id);
+      if (marker && station) styleMarker(marker, station, next.has(id));
     });
   }
 
@@ -424,18 +432,18 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
   }
 
   let lastSelectedStationId = null;
-  let lastExcludedIds = store.getState().excludedIds ?? new Set();
+  let lastSelectedIds = store.getState().selectedIds ?? new Set();
   store.subscribe((state) => {
     if (state.status !== "ready") return;
     if (state.visibleStations !== lastVisibleStations) {
       lastVisibleStations = state.visibleStations;
       render(state.visibleStations, hasActiveFilters(state));
-      lastExcludedIds = state.excludedIds ?? new Set(); // 再描画時に反映済みなので基準を更新
-    } else if (state.excludedIds !== lastExcludedIds) {
-      // 絞り込みは変わらず除外だけ変化 → 該当マーカーを地図から出し入れする（除外＝非表示）
-      const prev = lastExcludedIds;
-      lastExcludedIds = state.excludedIds ?? new Set();
-      updateExcludedMembership(prev, lastExcludedIds);
+      lastSelectedIds = state.selectedIds ?? new Set(); // 再描画時に反映済みなので基準を更新
+    } else if (state.selectedIds !== lastSelectedIds) {
+      // 絞り込みは変わらず選択だけ変化 → 該当マーカーの塗り分けだけ更新する
+      const prev = lastSelectedIds;
+      lastSelectedIds = state.selectedIds ?? new Set();
+      updateSelectedStyles(prev, lastSelectedIds);
     }
     if (state.selectedStationId !== lastSelectedStationId) {
       lastSelectedStationId = state.selectedStationId;

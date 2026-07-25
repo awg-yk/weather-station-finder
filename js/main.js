@@ -41,11 +41,13 @@ let elementLabelMap = new Map();
 let regionLabelMap = new Map();
 let filterUIs = { region: null, element: null, type: null, discontinued: null }; // 各絞り込みUIのハンドル（件数の更新に使う）
 
-/** 「観測所一覧（＝ダウンロード対象）」＝ 絞り込み結果からユーザーが除外した地点を差し引いたもの（除外方式）。
+/** 「観測所一覧（＝ダウンロード対象）」＝ ユーザーが選択した地点だけ（選択方式／オプトイン）。
+ *  絞り込みに関わらず選択は保持する（別の地域を選んでから絞り込みを変えても残る）。
  *  一覧テーブル・エクスポートの両方でこの結果を使う。 */
-function effectiveStations(state) {
-  if (!state.excludedIds || state.excludedIds.size === 0) return state.visibleStations;
-  return state.visibleStations.filter((s) => !state.excludedIds.has(s.id));
+function selectedStations(state) {
+  if (!state.selectedIds || state.selectedIds.size === 0) return [];
+  const pool = [...state.allStations, ...(state.discontinuedStations ?? [])];
+  return pool.filter((s) => state.selectedIds.has(s.id));
 }
 
 /** store の状態から filterEngine に渡す絞り込み条件を取り出す */
@@ -95,51 +97,31 @@ function selectStation(stationId) {
   store.setState({ selectedStationId: stationId });
 }
 
-/** 除外集合を更新する小さなヘルパー（購読を確実に発火させるため毎回新しい Set を作る）。 */
-function setExcluded(mutate) {
-  const next = new Set(store.getState().excludedIds);
+/** 選択集合を更新する小さなヘルパー（購読を確実に発火させるため毎回新しい Set を作る）。 */
+function setSelected(mutate) {
+  const next = new Set(store.getState().selectedIds);
   mutate(next);
-  store.setState({ excludedIds: next });
+  store.setState({ selectedIds: next });
 }
 
-/** 観測所一覧（ダウンロード対象）から1件除外する（一覧の✕・地図の「リストから外す」）。 */
-function excludeStation(stationId) {
-  setExcluded((set) => set.add(stationId));
-}
-
-/** 除外を取り消して一覧に戻す（地図の「リストに戻す」）。 */
-function includeStation(stationId) {
-  setExcluded((set) => set.delete(stationId));
-}
-
-/** 一覧チェック／地図マーカー操作用: 現在の状態に応じて選択/解除をトグルする。 */
+/** 一覧チェック／地図マーカー操作用: 選択/解除をトグルする（選択に追加／選択から外す）。 */
 function toggleStation(stationId) {
-  if (store.getState().excludedIds.has(stationId)) {
-    includeStation(stationId);
-  } else {
-    excludeStation(stationId);
-  }
+  setSelected((set) => (set.has(stationId) ? set.delete(stationId) : set.add(stationId)));
 }
 
-/** 複数地点をまとめて除外/選択する（地図のクラスタ一括操作用）。excluded=true で外す。 */
-function setManyExcluded(ids, excluded) {
-  const next = new Set(store.getState().excludedIds);
+/** 複数地点をまとめて選択/解除する（地図のクラスタ一括操作用）。selected=true で選択に追加。 */
+function setManySelected(ids, selected) {
+  const next = new Set(store.getState().selectedIds);
   for (const id of ids) {
-    if (excluded) next.add(id);
+    if (selected) next.add(id);
     else next.delete(id);
   }
-  store.setState({ excludedIds: next });
+  store.setState({ selectedIds: next });
 }
 
-/** 「表示中をすべて選択」トグル: 現在の絞り込み結果すべてを選択（除外解除）または解除（除外）する。 */
+/** 「表示中をすべて選択」トグル: 現在の絞り込み結果すべてを選択に追加／解除する。 */
 function setAllVisible(selected) {
-  const state = store.getState();
-  const next = new Set(state.excludedIds);
-  for (const s of state.visibleStations) {
-    if (selected) next.delete(s.id);
-    else next.add(s.id);
-  }
-  store.setState({ excludedIds: next });
+  setManySelected(store.getState().visibleStations.map((s) => s.id), selected);
 }
 
 /**
@@ -228,10 +210,10 @@ function initFilterUIs(data, initialValues) {
 
 exportCsvBtn.addEventListener("click", () => {
   const state = store.getState();
-  const exported = exportStationsAsCSV(effectiveStations(state), { elementLabelMap, regionLabelMap });
+  const exported = exportStationsAsCSV(selectedStations(state), { elementLabelMap, regionLabelMap });
   if (!exported) {
     const previousText = statusCount.textContent;
-    statusCount.textContent = "エクスポート対象の観測所がありません（絞り込み条件・除外を確認してください）";
+    statusCount.textContent = "観測所が選択されていません（地図やフィルタから追加してください）";
     setTimeout(() => {
       statusCount.textContent = previousText;
     }, 3000);
@@ -269,7 +251,7 @@ async function copyTextToClipboard(text) {
 /** 現在の観測所一覧（除外を反映）を、ダウンロードと同じCSV形式でクリップボードへコピーする。
  *  Colabのノートブックに貼り付ければ、ファイルの保存・アップロードなしで地点リストを渡せる（③）。 */
 copyColabBtn?.addEventListener("click", async () => {
-  const list = effectiveStations(store.getState());
+  const list = selectedStations(store.getState());
   if (list.length === 0) {
     flashButton(copyColabBtn, "対象がありません", "1. Colab用にコピー");
     return;
@@ -307,9 +289,10 @@ store.subscribe((state) => {
 
   syncUrlWithState(state); // フェーズ7: 絞り込み条件をURLクエリに反映（履歴は汚さない）
 
-  // チェックボックス方式: 絞り込み結果はすべて表示し、チェックの有無で対象を選ぶ
-  const filtered = state.visibleStations;
-  const { items, page, totalPages, total } = paginate(filtered, state.page, state.pageSize);
+  // 選択方式: 観測所一覧には「選択した地点だけ」を表示する（初期は0件）
+  const filtered = state.visibleStations; // 絞り込み結果（地図の表示・全選択の対象）
+  const listStations = selectedStations(state); // 選択済み（一覧・エクスポート対象）
+  const { items, page, totalPages, total } = paginate(listStations, state.page, state.pageSize);
   const poolTotal = effectivePool(state).length;
 
   renderStationTable(tableContainer, items, {
@@ -317,35 +300,35 @@ store.subscribe((state) => {
     regionLabelMap,
     selectedStationId: state.selectedStationId,
     onSelectStation: selectStation,
-    excludedIds: state.excludedIds,
+    selectedIds: state.selectedIds,
     onToggleStation: toggleStation,
+    emptyMessage: "まだ観測所が選択されていません。地図のマーカー／クラスタ、または「表示中をすべて選択」から追加してください。",
   });
 
   renderPagination(paginationContainer, {
     page,
     pageSize: state.pageSize,
     total,
-    // 手動でのページ送りは、直前の選択行が別ページに残ったままにならないよう選択も解除する
     onPageChange: (nextPage) => store.setState({ page: nextPage, selectedStationId: null }),
   });
 
   // 選択件数の表示と「表示中をすべて選択」チェックの状態
-  const excludedInVisible = filtered.reduce((n, s) => n + (state.excludedIds?.has(s.id) ? 1 : 0), 0);
-  const selectedCount = filtered.length - excludedInVisible;
+  const selectedInVisible = filtered.reduce((n, s) => n + (state.selectedIds?.has(s.id) ? 1 : 0), 0);
+  const selectedTotal = state.selectedIds?.size ?? 0;
   if (listSummary) {
-    listSummary.textContent = filtered.length > 0 ? `選択 ${selectedCount} / 絞り込み ${filtered.length} 件` : "";
+    listSummary.textContent = `選択 ${selectedTotal} 件（絞り込み ${filtered.length} 件中 ${selectedInVisible} 件を選択）`;
   }
   if (selectAllCb) {
-    selectAllCb.checked = filtered.length > 0 && excludedInVisible === 0;
-    selectAllCb.indeterminate = excludedInVisible > 0 && selectedCount > 0;
+    selectAllCb.checked = filtered.length > 0 && selectedInVisible === filtered.length;
+    selectAllCb.indeterminate = selectedInVisible > 0 && selectedInVisible < filtered.length;
   }
 
   if (total === 0) {
-    statusCount.textContent = `0 観測所を表示中（全 ${poolTotal} 件）`;
+    statusCount.textContent = `選択 0件（絞り込み ${filtered.length}件・全 ${poolTotal} 件中）`;
   } else {
     const start = (page - 1) * state.pageSize + 1;
     const end = Math.min(page * state.pageSize, total);
-    statusCount.textContent = `${start}〜${end}件 / 絞り込み ${total}件（選択 ${selectedCount}件・全 ${poolTotal} 件中）・${page}/${totalPages}ページ`;
+    statusCount.textContent = `${start}〜${end}件 / 選択 ${total}件（絞り込み ${filtered.length}件・全 ${poolTotal} 件中）・${page}/${totalPages}ページ`;
   }
 });
 
@@ -391,7 +374,7 @@ async function init() {
       store,
       elementLabelMap,
       onToggleStation: toggleStation,
-      onSetExcluded: setManyExcluded,
+      onSetSelected: setManySelected,
     });
 
     // URLに絞り込み条件が含まれていた場合、その条件で visibleStations を計算する

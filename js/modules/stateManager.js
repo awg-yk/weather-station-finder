@@ -46,8 +46,8 @@ function createStore(initialState) {
 // - selectedStationId: 一覧の行／地図のマーカーどちらかで選択された観測所のID（未選択はnull。フェーズ15）
 // - discontinuedStations: 廃止済み観測所（現行の観測所網には含まれない歴史的な地点。フェーズ16）
 // - includeDiscontinued: 廃止済み観測所を一覧・地図に含めるかどうか（既定true。フェーズ21で既定を反転）
-// - excludedIds: 絞り込み結果のうち、ユーザーが一覧の✕や地図から明示的に除外した観測所IDの集合。
-//   「観測所一覧（＝エクスポート対象）」は visibleStations からこの集合を差し引いたものになる（除外方式）。
+// - selectedIds: ユーザーが地図や一覧から明示的に選択した観測所IDの集合（初期は空＝何も選択なし）。
+//   「観測所一覧（＝エクスポート対象）」はこの集合の地点だけを表示する（選択方式／オプトイン）。
 export const store = createStore({
   allStations: [],
   visibleStations: [],
@@ -63,5 +63,5 @@ export const store = createStore({
   selectedStationId: null,
   discontinuedStations: [],
   includeDiscontinued: true,
-  excludedIds: new Set(),
+  selectedIds: new Set(),
 });

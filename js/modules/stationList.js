@@ -164,13 +164,21 @@ function formatNumber(value, digits) {
 export function renderStationTable(
   container,
   stations,
-  { elementLabelMap, regionLabelMap, selectedStationId = null, onSelectStation, excludedIds = null, onToggleStation } = {}
+  {
+    elementLabelMap,
+    regionLabelMap,
+    selectedStationId = null,
+    onSelectStation,
+    selectedIds = null,
+    onToggleStation,
+    emptyMessage = "条件に一致する観測所がありません。",
+  } = {}
 ) {
-  const isChecked = (id) => !(excludedIds && excludedIds.has(id));
+  const isChecked = (id) => Boolean(selectedIds && selectedIds.has(id));
   container.innerHTML = "";
 
   if (stations.length === 0) {
-    container.append(h("div", { class: "empty-state" }, "条件に一致する観測所がありません。"));
+    container.append(h("div", { class: "empty-state" }, emptyMessage));
     return;
   }
 
