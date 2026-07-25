@@ -268,13 +268,18 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
   }
   const L = window.L;
 
+  // 日本列島の範囲に固定する（大陸が見えて無駄にならないように）
+  const JAPAN_BOUNDS = L.latLngBounds([24.0, 122.0], [46.5, 149.5]);
+
   const map = L.map(container, {
-    center: [36.5, 138.0], // 日本全体がおおよそ収まる初期中心
-    zoom: 5,
     preferCanvas: true, // 大量マーカー描画のパフォーマンス対策
     scrollWheelZoom: false, // Ctrl押下時のみ自前でズームする（setupGestureHandling）
     dragging: false, // Ctrl押下中・タッチ2本指のときだけ有効化する
+    minZoom: 4,
+    maxBounds: JAPAN_BOUNDS.pad(0.15), // これより外（大陸側）へはパンできない
+    maxBoundsViscosity: 1.0,
   });
+  map.fitBounds(JAPAN_BOUNDS); // 初期表示は日本全体
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 18,
@@ -284,6 +289,10 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
 
   const showHint = createGestureHint(L, container);
   setupGestureHandling({ map, container, showHint });
+
+  // 地域を選ぶ前は地点を出さず、この案内を地図に重ねて表示する
+  const emptyHint = L.DomUtil.create("div", "map-empty-hint", container);
+  emptyHint.innerHTML = "地域や都道府県（北海道は地方）を選ぶと、<br>その地点が地図に表示されます";
 
   const hasCluster = typeof L.markerClusterGroup === "function";
   const markerLayer = hasCluster
@@ -365,6 +374,15 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
     markerById = new Map();
     stationById = new Map();
     selectedMarker = null;
+
+    // 地域などを選ぶ前は地点を出さず、日本全体のまま案内を表示する（気象庁の過去DL風の流れ）
+    if (!isFiltered) {
+      lastValidStations = [];
+      emptyHint.style.display = "";
+      map.fitBounds(JAPAN_BOUNDS);
+      return;
+    }
+    emptyHint.style.display = "none";
 
     const selected = store.getState().selectedIds ?? new Set();
     lastValidStations = stations.filter((s) => typeof s.lat === "number" && typeof s.lon === "number");

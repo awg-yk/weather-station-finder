@@ -158,3 +158,23 @@
 .map-popup__no-link {
   color: var(--color-ink-soft);
 }
+
+/* 地域を選ぶ前に地図へ重ねる案内（地点マーカーは選択後に表示） */
+.map-empty-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 500;
+  max-width: 80%;
+  padding: 12px 18px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-slate);
+  text-align: center;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
