@@ -258,7 +258,7 @@ export function initMapView({
   store,
   elementLabelMap,
   onToggleStation,
-  onSetSelected,
+  onSetExcluded,
   onSelectPrefecture,
   isPrefectureActive,
 }) {
@@ -392,11 +392,11 @@ export function initMapView({
    *   廃止済み観測所は既定で含まれるが、それ自体はユーザーによる「絞り込み」ではないので、
    *   isFilteredの判定には含めない（地域・観測要素・種別・検索語の実際の選択状態だけで判定する）。
    */
-  /** マーカーを「選択中（濃い＝type色）」/「未選択（薄い）」で塗り分ける。 */
+  /** マーカーを「対象に含む（濃い＝type色）」/「外した（薄い）」で塗り分ける。 */
   function styleMarker(marker, station, isSelected) {
     marker.setStyle({
       fillColor: getMarkerColor(station),
-      fillOpacity: isSelected ? 0.95 : 0.25,
+      fillOpacity: isSelected ? 0.95 : 0.2,
       color: isSelected ? "#1B1F23" : "#fff",
       weight: isSelected ? 2 : 1,
     });
@@ -417,41 +417,41 @@ export function initMapView({
     }
     emptyHint.style.display = "none";
 
-    const selected = store.getState().selectedIds ?? new Set();
+    const excluded = store.getState().excludedIds ?? new Set();
     lastValidStations = stations.filter((s) => typeof s.lat === "number" && typeof s.lon === "number");
 
     lastValidStations.forEach((station) => {
-      const isSelected = selected.has(station.id);
+      const isSelected = !excluded.has(station.id); // 絞り込み結果は既定で選択済み
       const marker = L.circleMarker([station.lat, station.lon], {
         radius: 6,
         color: isSelected ? "#1B1F23" : "#fff",
         weight: isSelected ? 2 : 1,
         fillColor: getMarkerColor(station),
-        fillOpacity: isSelected ? 0.95 : 0.25,
+        fillOpacity: isSelected ? 0.95 : 0.2,
       });
       marker.bindPopup(buildPopupHtml(station, { elementLabelMap }), { maxWidth: 260 });
       marker.stationId = station.id;
       // ③ カーソルを乗せると地点情報のポップアップを表示する
       marker.on("mouseover", () => marker.openPopup());
-      // 全地点を未選択で表示し、クリックで選択に追加／解除する（一覧はスクロールさせない）
+      // クリックで対象に含める／外すをトグル（一覧はスクロールさせない）
       marker.on("click", () => onToggleStation?.(station.id));
       markerById.set(station.id, marker);
       stationById.set(station.id, station);
-      markerLayer.addLayer(marker); // すべての地点を地図に表示する（未選択も薄く表示）
+      markerLayer.addLayer(marker);
     });
 
-    if (isFiltered) fitToRenderedStations();
+    fitToRenderedStations();
   }
 
-  /** 選択集合が変わったとき、変化したマーカーだけ塗り分けを更新する（全再描画は避ける）。 */
-  function updateSelectedStyles(prev, next) {
+  /** 除外集合が変わったとき、変化したマーカーだけ塗り分けを更新する（全再描画は避ける）。 */
+  function updateExcludedStyles(prev, next) {
     const changed = new Set();
     prev.forEach((id) => next.has(id) || changed.add(id));
     next.forEach((id) => prev.has(id) || changed.add(id));
     changed.forEach((id) => {
       const marker = markerById.get(id);
       const station = stationById.get(id);
-      if (marker && station) styleMarker(marker, station, next.has(id));
+      if (marker && station) styleMarker(marker, station, !next.has(id));
     });
   }
 
@@ -474,7 +474,7 @@ export function initMapView({
   }
 
   let lastSelectedStationId = null;
-  let lastSelectedIds = store.getState().selectedIds ?? new Set();
+  let lastExcludedIds = store.getState().excludedIds ?? new Set();
   let lastSelectedPrefectures = store.getState().selectedPrefectures ?? new Set();
   store.subscribe((state) => {
     if (state.status !== "ready") return;
@@ -485,12 +485,12 @@ export function initMapView({
     if (state.visibleStations !== lastVisibleStations) {
       lastVisibleStations = state.visibleStations;
       render(state.visibleStations, hasActiveFilters(state));
-      lastSelectedIds = state.selectedIds ?? new Set(); // 再描画時に反映済みなので基準を更新
-    } else if (state.selectedIds !== lastSelectedIds) {
-      // 絞り込みは変わらず選択だけ変化 → 該当マーカーの塗り分けだけ更新する
-      const prev = lastSelectedIds;
-      lastSelectedIds = state.selectedIds ?? new Set();
-      updateSelectedStyles(prev, lastSelectedIds);
+      lastExcludedIds = state.excludedIds ?? new Set(); // 再描画時に反映済みなので基準を更新
+    } else if (state.excludedIds !== lastExcludedIds) {
+      // 絞り込みは変わらず除外だけ変化 → 該当マーカーの塗り分けだけ更新する
+      const prev = lastExcludedIds;
+      lastExcludedIds = state.excludedIds ?? new Set();
+      updateExcludedStyles(prev, lastExcludedIds);
     }
     if (state.selectedStationId !== lastSelectedStationId) {
       lastSelectedStationId = state.selectedStationId;

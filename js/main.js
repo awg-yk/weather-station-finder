@@ -19,7 +19,7 @@ import { initKeywordSearch } from "./modules/keywordSearch.js";
 import { paginate, renderPagination } from "./modules/pagination.js";
 import { computeVisibleStations, buildFacetCounts, buildStationTypeCounts } from "./modules/filterEngine.js";
 import { exportStationsAsCSV, stationsToCsv } from "./modules/exporter.js";
-import { initMapView } from "./modules/mapView.js";
+import { initMapView, hasActiveFilters } from "./modules/mapView.js";
 import { parseStateFromUrl, syncUrlWithState } from "./modules/urlState.js";
 import { buildElementLabelMap, buildRegionLabelMap } from "./utils/helpers.js";
 
@@ -41,13 +41,16 @@ let elementLabelMap = new Map();
 let regionLabelMap = new Map();
 let filterUIs = { region: null, element: null, type: null, discontinued: null }; // 各絞り込みUIのハンドル（件数の更新に使う）
 
-/** 「観測所一覧（＝ダウンロード対象）」＝ ユーザーが選択した地点だけ（選択方式／オプトイン）。
- *  絞り込みに関わらず選択は保持する（別の地域を選んでから絞り込みを変えても残る）。
- *  一覧テーブル・エクスポートの両方でこの結果を使う。 */
+/** 一覧に表示する地点＝現在の絞り込み結果すべて（絞り込む前は空）。
+ *  各行はチェックで「対象に含める／外す」を切り替える。 */
+function listStations(state) {
+  return hasActiveFilters(state) ? state.visibleStations : [];
+}
+
+/** ダウンロード対象＝絞り込み結果から「外した地点(excludedIds)」を差し引いたもの。 */
 function selectedStations(state) {
-  if (!state.selectedIds || state.selectedIds.size === 0) return [];
-  const pool = [...state.allStations, ...(state.discontinuedStations ?? [])];
-  return pool.filter((s) => state.selectedIds.has(s.id));
+  if (!hasActiveFilters(state)) return [];
+  return state.visibleStations.filter((s) => !state.excludedIds.has(s.id));
 }
 
 /** store の状態から filterEngine に渡す絞り込み条件を取り出す */
@@ -97,31 +100,31 @@ function selectStation(stationId) {
   store.setState({ selectedStationId: stationId });
 }
 
-/** 選択集合を更新する小さなヘルパー（購読を確実に発火させるため毎回新しい Set を作る）。 */
-function setSelected(mutate) {
-  const next = new Set(store.getState().selectedIds);
+/** 除外集合を更新する小さなヘルパー（購読を確実に発火させるため毎回新しい Set を作る）。 */
+function setExcluded(mutate) {
+  const next = new Set(store.getState().excludedIds);
   mutate(next);
-  store.setState({ selectedIds: next });
+  store.setState({ excludedIds: next });
 }
 
-/** 一覧チェック／地図マーカー操作用: 選択/解除をトグルする（選択に追加／選択から外す）。 */
+/** 一覧チェック／地図マーカー操作用: 対象に含める⇔外す をトグルする。 */
 function toggleStation(stationId) {
-  setSelected((set) => (set.has(stationId) ? set.delete(stationId) : set.add(stationId)));
+  setExcluded((set) => (set.has(stationId) ? set.delete(stationId) : set.add(stationId)));
 }
 
-/** 複数地点をまとめて選択/解除する（地図のクラスタ一括操作用）。selected=true で選択に追加。 */
-function setManySelected(ids, selected) {
-  const next = new Set(store.getState().selectedIds);
+/** 複数地点をまとめて外す/含める。excluded=true で外す。 */
+function setManyExcluded(ids, excluded) {
+  const next = new Set(store.getState().excludedIds);
   for (const id of ids) {
-    if (selected) next.add(id);
+    if (excluded) next.add(id);
     else next.delete(id);
   }
-  store.setState({ selectedIds: next });
+  store.setState({ excludedIds: next });
 }
 
-/** 「表示中をすべて選択」トグル: 現在の絞り込み結果すべてを選択に追加／解除する。 */
+/** 「表示中をすべて選択」トグル: 絞り込み結果を全部含める（除外解除）／全部外す。 */
 function setAllVisible(selected) {
-  setManySelected(store.getState().visibleStations.map((s) => s.id), selected);
+  setManyExcluded(store.getState().visibleStations.map((s) => s.id), !selected);
 }
 
 /**
@@ -289,10 +292,9 @@ store.subscribe((state) => {
 
   syncUrlWithState(state); // フェーズ7: 絞り込み条件をURLクエリに反映（履歴は汚さない）
 
-  // 選択方式: 観測所一覧には「選択した地点だけ」を表示する（初期は0件）
-  const filtered = state.visibleStations; // 絞り込み結果（地図の表示・全選択の対象）
-  const listStations = selectedStations(state); // 選択済み（一覧・エクスポート対象）
-  const { items, page, totalPages, total } = paginate(listStations, state.page, state.pageSize);
+  // 絞り込むと候補（＝絞り込み結果すべて）を一覧に表示。既定は全チェック（＝選択済み）。
+  const filtered = listStations(state); // 絞り込む前は空
+  const { items, page, totalPages, total } = paginate(filtered, state.page, state.pageSize);
   const poolTotal = effectivePool(state).length;
 
   renderStationTable(tableContainer, items, {
@@ -300,9 +302,9 @@ store.subscribe((state) => {
     regionLabelMap,
     selectedStationId: state.selectedStationId,
     onSelectStation: selectStation,
-    selectedIds: state.selectedIds,
+    excludedIds: state.excludedIds,
     onToggleStation: toggleStation,
-    emptyMessage: "まだ観測所が選択されていません。地図のマーカー／クラスタ、または「表示中をすべて選択」から追加してください。",
+    emptyMessage: "地図で都道府県をクリックするか、上の「地域で絞り込む」で選ぶと、その地点がここに表示されます。",
   });
 
   renderPagination(paginationContainer, {
@@ -312,23 +314,23 @@ store.subscribe((state) => {
     onPageChange: (nextPage) => store.setState({ page: nextPage, selectedStationId: null }),
   });
 
-  // 選択件数の表示と「表示中をすべて選択」チェックの状態
-  const selectedInVisible = filtered.reduce((n, s) => n + (state.selectedIds?.has(s.id) ? 1 : 0), 0);
-  const selectedTotal = state.selectedIds?.size ?? 0;
+  // 選択件数（絞り込み結果 − 外した分）と「表示中をすべて選択」チェックの状態
+  const excludedInVisible = filtered.reduce((n, s) => n + (state.excludedIds?.has(s.id) ? 1 : 0), 0);
+  const selectedCount = filtered.length - excludedInVisible;
   if (listSummary) {
-    listSummary.textContent = `選択 ${selectedTotal} 件（絞り込み ${filtered.length} 件中 ${selectedInVisible} 件を選択）`;
+    listSummary.textContent = filtered.length > 0 ? `選択 ${selectedCount} / 絞り込み ${filtered.length} 件` : "";
   }
   if (selectAllCb) {
-    selectAllCb.checked = filtered.length > 0 && selectedInVisible === filtered.length;
-    selectAllCb.indeterminate = selectedInVisible > 0 && selectedInVisible < filtered.length;
+    selectAllCb.checked = filtered.length > 0 && excludedInVisible === 0;
+    selectAllCb.indeterminate = excludedInVisible > 0 && excludedInVisible < filtered.length;
   }
 
   if (total === 0) {
-    statusCount.textContent = `選択 0件（絞り込み ${filtered.length}件・全 ${poolTotal} 件中）`;
+    statusCount.textContent = `絞り込むと地点が表示されます（全 ${poolTotal} 件中）`;
   } else {
     const start = (page - 1) * state.pageSize + 1;
     const end = Math.min(page * state.pageSize, total);
-    statusCount.textContent = `${start}〜${end}件 / 選択 ${total}件（絞り込み ${filtered.length}件・全 ${poolTotal} 件中）・${page}/${totalPages}ページ`;
+    statusCount.textContent = `${start}〜${end}件 / 絞り込み ${total}件（選択 ${selectedCount}件・全 ${poolTotal} 件中）・${page}/${totalPages}ページ`;
   }
 });
 
@@ -391,7 +393,7 @@ async function init() {
       store,
       elementLabelMap,
       onToggleStation: toggleStation,
-      onSetSelected: setManySelected,
+      onSetExcluded: setManyExcluded,
       onSelectPrefecture: selectPrefectureFromMap,
       isPrefectureActive,
     });

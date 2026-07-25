@@ -169,12 +169,12 @@ export function renderStationTable(
     regionLabelMap,
     selectedStationId = null,
     onSelectStation,
-    selectedIds = null,
+    excludedIds = null,
     onToggleStation,
     emptyMessage = "条件に一致する観測所がありません。",
   } = {}
 ) {
-  const isChecked = (id) => Boolean(selectedIds && selectedIds.has(id));
+  const isChecked = (id) => !(excludedIds && excludedIds.has(id));
   container.innerHTML = "";
 
   if (stations.length === 0) {

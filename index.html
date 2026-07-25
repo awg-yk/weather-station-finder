@@ -33,36 +33,6 @@
 
   <main class="app-main">
 
-    <!-- 地図（最上部）。検索欄はヘッダー右側に配置 -->
-    <section class="panel map-panel" style="margin-bottom: var(--space-4);">
-      <div class="panel__header panel__header--with-actions">
-        <div>
-          <h2 class="panel__title">
-            地図で見る
-            <span class="panel__info" tabindex="0">
-              <span class="panel__info-icon" aria-hidden="true">i</span>
-              <span class="u-visually-hidden">説明を表示</span>
-              <p class="panel__note" role="tooltip">
-日本列島だけを表示します。<strong>最初は地点を表示せず</strong>、<strong>地図で都道府県をクリック</strong>すると（または「地域で絞り込む」で選ぶと）、その範囲にズームして地点が表示されます（気象庁の過去データDLと同じ流れ。北海道をクリックすると全域が対象になります）。表示された地点は最初どれも<strong>未選択（薄い表示）</strong>で、<strong>マーカーをクリックするとダウンロード対象に「追加／解除」</strong>できます（選択すると色が濃くなります）。まとめて選ぶときは「表示中をすべて選択」が便利です。
-                ページをスクロールしただけで地図が動かないよう、<strong>拡大縮小・移動には Ctrl（macOSは⌘）キー</strong>が必要です
-                （Ctrl＋ホイールで拡大縮小、Ctrl＋ドラッグで移動。タッチ端末では2本指）。
-                Ctrlなしで使える操作として、左上の ＋／− ボタン、ダブルクリックでの拡大、右上の「検索結果に合わせる」ボタンがあります。
-              </p>
-            </span>
-          </h2>
-        </div>
-        <div class="panel__actions" id="keyword-search-container"></div>
-      </div>
-      <div class="panel__body map-panel__body">
-        <div id="map-view-container" class="map-view"></div>
-      </div>
-      <div class="map-legend">
-        <span class="map-legend__item"><span class="map-legend__dot map-legend__dot--kansho"></span>気象官署</span>
-        <span class="map-legend__item"><span class="map-legend__dot map-legend__dot--amedas"></span>アメダス</span>
-        <span class="map-legend__item"><span class="map-legend__dot map-legend__dot--discontinued"></span>廃止済み</span>
-      </div>
-    </section>
-
     <div class="filter-panels">
       <section class="panel">
         <div class="panel__header">
@@ -135,6 +105,36 @@
       </div>
     </div>
 
+    <!-- 地図（絞り込みの下）。検索欄はヘッダー右側に配置 -->
+    <section class="panel map-panel" style="margin-bottom: var(--space-4);">
+      <div class="panel__header panel__header--with-actions">
+        <div>
+          <h2 class="panel__title">
+            地図で見る
+            <span class="panel__info" tabindex="0">
+              <span class="panel__info-icon" aria-hidden="true">i</span>
+              <span class="u-visually-hidden">説明を表示</span>
+              <p class="panel__note" role="tooltip">
+日本列島だけを表示します。<strong>地図で都道府県をクリック</strong>すると（または上の「地域で絞り込む」で選ぶと）、その範囲にズームして地点が表示されます（気象庁の過去データDLと同じ流れ。北海道をクリックすると全域が対象）。<strong>絞り込んだ地点は既定で「選択済み（濃い表示）」</strong>です。<strong>不要なマーカーをクリックすると対象から外せます</strong>（薄くなる）。まとめて外す／戻すは「表示中をすべて選択」で切り替えられます。
+                ページをスクロールしただけで地図が動かないよう、<strong>拡大縮小・移動には Ctrl（macOSは⌘）キー</strong>が必要です
+                （Ctrl＋ホイールで拡大縮小、Ctrl＋ドラッグで移動。タッチ端末では2本指）。
+                Ctrlなしで使える操作として、左上の ＋／− ボタン、ダブルクリックでの拡大、右上の「検索結果に合わせる」ボタンがあります。
+              </p>
+            </span>
+          </h2>
+        </div>
+        <div class="panel__actions" id="keyword-search-container"></div>
+      </div>
+      <div class="panel__body map-panel__body">
+        <div id="map-view-container" class="map-view"></div>
+      </div>
+      <div class="map-legend">
+        <span class="map-legend__item"><span class="map-legend__dot map-legend__dot--kansho"></span>気象官署</span>
+        <span class="map-legend__item"><span class="map-legend__dot map-legend__dot--amedas"></span>アメダス</span>
+        <span class="map-legend__item"><span class="map-legend__dot map-legend__dot--discontinued"></span>廃止済み</span>
+      </div>
+    </section>
+
     <div class="status-bar">
       <span id="status-count" class="status-bar__count" role="status" aria-live="polite">読み込み中...</span>
     </div>
@@ -147,7 +147,7 @@
             <span class="panel__info" tabindex="0">
               <span class="panel__info-icon" aria-hidden="true">i</span>
               <span class="u-visually-hidden">説明を表示</span>
-              <p class="panel__note" role="tooltip">気象庁「アメダス観測所表」に基づく全国1,286地点（気象官署56地点＋アメダス1,230地点）に、南極・昭和基地を加えた1,287地点を収録しています。<strong>地点名をクリックすると、気象庁「過去の気象データ検索」がその地点を選択した状態で開きます</strong>（年月・データ種別を選ぶと日別値・月別値・平年値などを閲覧できます）。地点名の後ろに「*」が付く7地点は、気象庁側に同名で複数の地点番号があり自動判定を保留しているため、都道府県の地点選択ページへ案内します。観測要素は色分けして表示しています（色の対応は「観測要素で絞り込む」の各項目のドットと同じです）。現在は運用されていない過去の観測所506地点も既定で一覧・地図に含まれています（「廃止」タグと観測期間を表示。うち386地点は気象庁ページへのリンクも確認済みです）。含めたくない場合は「廃止済みの観測地点を除外」をオンにしてください。<strong>この一覧には「選択した地点」だけが表示されます（最初は0件）。地図のマーカーや数字（クラスタ）をクリックして地点を追加すると、ここに表示されます。「表示中をすべて選択」で、現在の絞り込み結果をまとめて選択に追加できます。各行の左端のチェックを外すと、その地点を選択から外せます。</strong></p>
+              <p class="panel__note" role="tooltip">気象庁「アメダス観測所表」に基づく全国1,286地点（気象官署56地点＋アメダス1,230地点）に、南極・昭和基地を加えた1,287地点を収録しています。<strong>地点名をクリックすると、気象庁「過去の気象データ検索」がその地点を選択した状態で開きます</strong>（年月・データ種別を選ぶと日別値・月別値・平年値などを閲覧できます）。地点名の後ろに「*」が付く7地点は、気象庁側に同名で複数の地点番号があり自動判定を保留しているため、都道府県の地点選択ページへ案内します。観測要素は色分けして表示しています（色の対応は「観測要素で絞り込む」の各項目のドットと同じです）。現在は運用されていない過去の観測所506地点も既定で一覧・地図に含まれています（「廃止」タグと観測期間を表示。うち386地点は気象庁ページへのリンクも確認済みです）。含めたくない場合は「廃止済みの観測地点を除外」をオンにしてください。<strong>絞り込む（地図で都道府県をクリック、または上のフィルタで選択）と、その地点がこの一覧に表示され、既定ですべて選択済み（チェック済み）になります。不要な地点は各行の左端のチェックを外すと対象から外せます（地図のマーカーでも同じ）。「表示中をすべて選択」で全チェックのオン／オフを切り替えられます。</strong></p>
             </span>
             <label class="select-all"><input type="checkbox" id="select-all-cb" /> 表示中をすべて選択</label>
             <span id="list-summary" class="list-summary" role="status" aria-live="polite"></span>
