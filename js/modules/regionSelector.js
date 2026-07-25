@@ -252,5 +252,14 @@ export function initRegionSelector({ container, regions, hokkaidoSubAreas, stati
     });
   }
 
-  return { updateCounts };
+  /** 地図クリック等から、指定した都道府県（北海道は地域名）だけを選択状態にする（他は解除）。 */
+  function selectOnly(prefNames) {
+    selected.clear();
+    prefectureCheckboxes.forEach((cb) => (cb.checked = false));
+    (prefNames || []).forEach((name) => setPrefectureSelected(name, true));
+    refreshDerivedStates();
+    emitChange();
+  }
+
+  return { updateCounts, selectOnly };
 }

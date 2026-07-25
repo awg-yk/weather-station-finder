@@ -369,12 +369,31 @@ async function init() {
       includeDiscontinued: urlState.includeDiscontinued,
     });
 
+    // 北海道は地図上では1つのポリゴンだが、絞り込みは地方（宗谷・上川…）単位。
+    // 地図で北海道をクリックしたときは、その全地方を選択する。
+    const hokkaidoAreas = (data.hokkaidoSubAreas ?? []).flatMap((g) => g.areas ?? []);
+
+    /** 地図で都道府県ポリゴンをクリックしたとき、その都道府県（北海道は全地方）だけを絞り込みに設定。 */
+    function selectPrefectureFromMap(name) {
+      if (!filterUIs.region || typeof filterUIs.region.selectOnly !== "function") return;
+      filterUIs.region.selectOnly(name === "北海道" ? hokkaidoAreas : [name]);
+    }
+
+    /** 地図のポリゴン強調用: その都道府県が現在の絞り込みに含まれているか。 */
+    function isPrefectureActive(name) {
+      const sel = store.getState().selectedPrefectures;
+      if (!sel || sel.size === 0) return false;
+      return name === "北海道" ? hokkaidoAreas.some((a) => sel.has(a)) : sel.has(name);
+    }
+
     initMapView({
       container: mapViewContainer,
       store,
       elementLabelMap,
       onToggleStation: toggleStation,
       onSetSelected: setManySelected,
+      onSelectPrefecture: selectPrefectureFromMap,
+      isPrefectureActive,
     });
 
     // URLに絞り込み条件が含まれていた場合、その条件で visibleStations を計算する

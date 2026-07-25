@@ -253,7 +253,15 @@ function setupGestureHandling({ map, container, showHint }) {
  * @param {Map} opts.elementLabelMap - 観測要素ID→日本語ラベルの辞書
  * @returns {Object|null} Leaflet map インスタンス（Leaflet未読み込み時はnull）
  */
-export function initMapView({ container, store, elementLabelMap, onToggleStation, onSetSelected }) {
+export function initMapView({
+  container,
+  store,
+  elementLabelMap,
+  onToggleStation,
+  onSetSelected,
+  onSelectPrefecture,
+  isPrefectureActive,
+}) {
   const onSelectStation = (id) => {
     const state = store.getState();
     const index = state.visibleStations.findIndex((s) => s.id === id);
@@ -292,7 +300,50 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
 
   // 地域を選ぶ前は地点を出さず、この案内を地図に重ねて表示する
   const emptyHint = L.DomUtil.create("div", "map-empty-hint", container);
-  emptyHint.innerHTML = "地域や都道府県（北海道は地方）を選ぶと、<br>その地点が地図に表示されます";
+  emptyHint.innerHTML = "地図で<b>都道府県をクリック</b>すると、<br>その地点が表示されます";
+
+  // ── 都道府県の境界をクリックして選べるようにする（気象庁の過去DL風） ──
+  //   ポリゴンはマーカーより下のペインに置き、地点マーカーのクリックを優先させる。
+  map.createPane("prefectures");
+  map.getPane("prefectures").style.zIndex = 250;
+  const prefRenderer = L.svg({ pane: "prefectures" }); // マーカー(canvas)とは別にSVGで描く
+  const polyByName = new Map(); // 都道府県名 -> Leafletレイヤー
+
+  function prefStyle(name) {
+    const active = Boolean(isPrefectureActive && isPrefectureActive(name));
+    return {
+      pane: "prefectures",
+      color: active ? "#1C7C8C" : "#7f9aa0",
+      weight: active ? 2.5 : 1,
+      fillColor: active ? "#1C7C8C" : "#9fc0c6",
+      fillOpacity: active ? 0.2 : 0.06,
+    };
+  }
+
+  function restylePrefectures() {
+    polyByName.forEach((layer, name) => layer.setStyle(prefStyle(name)));
+  }
+
+  fetch("data/prefectures.geojson")
+    .then((r) => r.json())
+    .then((geo) => {
+      L.geoJSON(geo, {
+        pane: "prefectures",
+        renderer: prefRenderer,
+        style: (f) => prefStyle(f.properties.name),
+        onEachFeature: (f, layer) => {
+          const name = f.properties.name;
+          polyByName.set(name, layer);
+          layer.on("click", () => onSelectPrefecture && onSelectPrefecture(name));
+          layer.on("mouseover", () => layer.setStyle({ fillOpacity: 0.3, weight: 2.5 }));
+          layer.on("mouseout", () => layer.setStyle(prefStyle(name)));
+          layer.bindTooltip(name, { sticky: true, direction: "top" });
+        },
+      }).addTo(map);
+    })
+    .catch(() => {
+      /* 境界データが無くても地図・絞り込みは従来通り使える */
+    });
 
   // クラスタ（数字集約）は使わず、選択中の地域の地点をすべて個別マーカーで表示する
   //   （地点が重なって数字になる問題を避ける。まとめて選択は「表示中をすべて選択」で行える）。
@@ -424,8 +475,13 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
 
   let lastSelectedStationId = null;
   let lastSelectedIds = store.getState().selectedIds ?? new Set();
+  let lastSelectedPrefectures = store.getState().selectedPrefectures ?? new Set();
   store.subscribe((state) => {
     if (state.status !== "ready") return;
+    if (state.selectedPrefectures !== lastSelectedPrefectures) {
+      lastSelectedPrefectures = state.selectedPrefectures ?? new Set();
+      restylePrefectures(); // 選択中の都道府県を地図上でも強調
+    }
     if (state.visibleStations !== lastVisibleStations) {
       lastVisibleStations = state.visibleStations;
       render(state.visibleStations, hasActiveFilters(state));
