@@ -261,15 +261,6 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
     store.setState({ selectedStationId: id, page });
   };
 
-  /** マーカーを「除外中（薄いグレー）」/「一覧に含む（通常色）」で塗り分ける。 */
-  function applyExcludedStyle(marker, station, isExcluded) {
-    marker.setStyle(
-      isExcluded
-        ? { fillColor: DISCONTINUED_MARKER_COLOR, fillOpacity: 0.2 }
-        : { fillColor: getMarkerColor(station), fillOpacity: 0.9 }
-    );
-  }
-
   if (typeof window === "undefined" || !window.L) {
     container.innerHTML =
       '<p class="map-view__error">地図ライブラリ(Leaflet)の読み込みに失敗しました。vendor/leaflet/ 配下のファイルが揃っているかご確認のうえ再読み込みしてください。</p>';
@@ -369,38 +360,39 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
     lastValidStations = stations.filter((s) => typeof s.lat === "number" && typeof s.lon === "number");
 
     lastValidStations.forEach((station) => {
-      const isExcluded = excluded.has(station.id);
       const marker = L.circleMarker([station.lat, station.lon], {
         radius: 6,
         color: "#fff",
         weight: 1,
-        fillColor: isExcluded ? DISCONTINUED_MARKER_COLOR : getMarkerColor(station),
-        fillOpacity: isExcluded ? 0.2 : 0.9,
+        fillColor: getMarkerColor(station),
+        fillOpacity: 0.9,
       });
       marker.bindPopup(buildPopupHtml(station, { elementLabelMap }), { maxWidth: 260 });
       marker.stationId = station.id;
       // ③ カーソルを乗せると地点情報のポップアップを表示する
       marker.on("mouseover", () => marker.openPopup());
-      // ①② マーカークリックで対象から直接「外す／戻す」。一覧はスクロールさせない
+      // ①② マーカークリックで対象から直接「外す」。一覧はスクロールさせない
       //   （連続して外しやすいよう、選択・ページ移動はしない）。
       marker.on("click", () => onToggleStation?.(station.id));
       markerById.set(station.id, marker);
       stationById.set(station.id, station);
-      markerLayer.addLayer(marker);
+      // ① 除外された地点は地図に載せない（クラスタの数字も選択中の数だけになる）
+      if (!excluded.has(station.id)) markerLayer.addLayer(marker);
     });
 
     if (isFiltered) fitToRenderedStations();
   }
 
-  /** 除外集合が変わったとき、変化したマーカーだけ塗り分けを更新する（全再描画は避ける）。 */
-  function updateExcludedStyles(prev, next) {
+  /** 除外集合が変わったとき、変化したマーカーだけ地図から出し入れする（除外＝非表示）。 */
+  function updateExcludedMembership(prev, next) {
     const changed = new Set();
     prev.forEach((id) => next.has(id) || changed.add(id));
     next.forEach((id) => prev.has(id) || changed.add(id));
     changed.forEach((id) => {
       const marker = markerById.get(id);
-      const station = stationById.get(id);
-      if (marker && station) applyExcludedStyle(marker, station, next.has(id));
+      if (!marker) return;
+      if (next.has(id)) markerLayer.removeLayer(marker); // 除外 → 非表示
+      else markerLayer.addLayer(marker); // 選択に戻す → 再表示
     });
   }
 
@@ -412,6 +404,7 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
   function focusStation(id) {
     const marker = markerById.get(id);
     if (!marker) return; // 絞り込みで現在の地図に表示されていない観測所は何もしない
+    if (!markerLayer.hasLayer(marker)) return; // 除外中で地図に載っていない地点は何もしない
 
     if (selectedMarker && selectedMarker !== marker) {
       selectedMarker.setStyle({ radius: 6, weight: 1 });
@@ -439,10 +432,10 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
       render(state.visibleStations, hasActiveFilters(state));
       lastExcludedIds = state.excludedIds ?? new Set(); // 再描画時に反映済みなので基準を更新
     } else if (state.excludedIds !== lastExcludedIds) {
-      // 絞り込みは変わらず除外だけ変化 → 該当マーカーの塗り分けだけ更新する
+      // 絞り込みは変わらず除外だけ変化 → 該当マーカーを地図から出し入れする（除外＝非表示）
       const prev = lastExcludedIds;
       lastExcludedIds = state.excludedIds ?? new Set();
-      updateExcludedStyles(prev, lastExcludedIds);
+      updateExcludedMembership(prev, lastExcludedIds);
     }
     if (state.selectedStationId !== lastSelectedStationId) {
       lastSelectedStationId = state.selectedStationId;
