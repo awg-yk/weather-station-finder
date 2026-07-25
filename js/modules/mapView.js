@@ -253,7 +253,7 @@ function setupGestureHandling({ map, container, showHint }) {
  * @param {Map} opts.elementLabelMap - 観測要素ID→日本語ラベルの辞書
  * @returns {Object|null} Leaflet map インスタンス（Leaflet未読み込み時はnull）
  */
-export function initMapView({ container, store, elementLabelMap, onToggleStation }) {
+export function initMapView({ container, store, elementLabelMap, onToggleStation, onSetExcluded }) {
   const onSelectStation = (id) => {
     const state = store.getState();
     const index = state.visibleStations.findIndex((s) => s.id === id);
@@ -296,9 +296,26 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
 
   const hasCluster = typeof L.markerClusterGroup === "function";
   const markerLayer = hasCluster
-    ? L.markerClusterGroup({ maxClusterRadius: 50, disableClusteringAtZoom: 12, spiderfyOnMaxZoom: true })
+    ? L.markerClusterGroup({
+        maxClusterRadius: 50,
+        disableClusteringAtZoom: 12,
+        spiderfyOnMaxZoom: true,
+        zoomToBoundsOnClick: false, // ② クラスタのクリックはズームではなく一括除外に使う
+      })
     : L.layerGroup();
   markerLayer.addTo(map);
+
+  // ② 数字（クラスタ）をクリックすると、その中の地点をまとめて対象から外す／戻す。
+  //   1つでも選択中があれば全部外し、すべて外れていれば全部戻す（東京の島などを一括操作できる）。
+  if (hasCluster) {
+    markerLayer.on("clusterclick", (e) => {
+      const ids = e.layer.getAllChildMarkers().map((m) => m.stationId).filter(Boolean);
+      if (!ids.length || !onSetExcluded) return;
+      const excluded = store.getState().excludedIds ?? new Set();
+      const anySelected = ids.some((id) => !excluded.has(id));
+      onSetExcluded(ids, anySelected);
+    });
+  }
 
   let lastVisibleStations = null;
   let lastValidStations = []; // 「検索結果に合わせる」ボタン用に、現在描画中の観測所を保持する
@@ -361,12 +378,12 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
         fillOpacity: isExcluded ? 0.2 : 0.9,
       });
       marker.bindPopup(buildPopupHtml(station, { elementLabelMap }), { maxWidth: 260 });
-      // ① マーカークリックで、その地点をダウンロード対象から直接「外す／戻す」（未選択は薄いグレー）。
-      //   同時に一覧側の選択状態も同期し、ポップアップで地点情報を確認できる。
-      marker.on("click", () => {
-        onToggleStation?.(station.id);
-        onSelectStation(station.id);
-      });
+      marker.stationId = station.id;
+      // ③ カーソルを乗せると地点情報のポップアップを表示する
+      marker.on("mouseover", () => marker.openPopup());
+      // ①② マーカークリックで対象から直接「外す／戻す」。一覧はスクロールさせない
+      //   （連続して外しやすいよう、選択・ページ移動はしない）。
+      marker.on("click", () => onToggleStation?.(station.id));
       markerById.set(station.id, marker);
       stationById.set(station.id, station);
       markerLayer.addLayer(marker);

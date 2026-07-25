@@ -121,6 +121,16 @@ function toggleStation(stationId) {
   }
 }
 
+/** 複数地点をまとめて除外/選択する（地図のクラスタ一括操作用）。excluded=true で外す。 */
+function setManyExcluded(ids, excluded) {
+  const next = new Set(store.getState().excludedIds);
+  for (const id of ids) {
+    if (excluded) next.add(id);
+    else next.delete(id);
+  }
+  store.setState({ excludedIds: next });
+}
+
 /** 「表示中をすべて選択」トグル: 現在の絞り込み結果すべてを選択（除外解除）または解除（除外）する。 */
 function setAllVisible(selected) {
   const state = store.getState();
@@ -381,6 +391,7 @@ async function init() {
       store,
       elementLabelMap,
       onToggleStation: toggleStation,
+      onSetExcluded: setManyExcluded,
     });
 
     // URLに絞り込み条件が含まれていた場合、その条件で visibleStations を計算する

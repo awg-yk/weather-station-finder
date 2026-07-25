@@ -57,7 +57,7 @@ export const store = createStore({
   selectedStationTypes: new Set(),
   keyword: "",
   page: 1,
-  pageSize: 50,
+  pageSize: 15,
   status: "loading",
   errorMessage: "",
   selectedStationId: null,
