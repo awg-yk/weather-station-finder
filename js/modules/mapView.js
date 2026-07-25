@@ -294,28 +294,10 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
   const emptyHint = L.DomUtil.create("div", "map-empty-hint", container);
   emptyHint.innerHTML = "地域や都道府県（北海道は地方）を選ぶと、<br>その地点が地図に表示されます";
 
-  const hasCluster = typeof L.markerClusterGroup === "function";
-  const markerLayer = hasCluster
-    ? L.markerClusterGroup({
-        maxClusterRadius: 50,
-        disableClusteringAtZoom: 12,
-        spiderfyOnMaxZoom: true,
-        zoomToBoundsOnClick: false, // クラスタのクリックはズームではなく一括選択に使う
-      })
-    : L.layerGroup();
+  // クラスタ（数字集約）は使わず、選択中の地域の地点をすべて個別マーカーで表示する
+  //   （地点が重なって数字になる問題を避ける。まとめて選択は「表示中をすべて選択」で行える）。
+  const markerLayer = L.layerGroup();
   markerLayer.addTo(map);
-
-  // 数字（クラスタ）をクリックすると、その中の地点をまとめて選択／解除する。
-  //   1つでも未選択があれば全部選択、すべて選択済みなら全部解除（東京の島などを一括で追加できる）。
-  if (hasCluster) {
-    markerLayer.on("clusterclick", (e) => {
-      const ids = e.layer.getAllChildMarkers().map((m) => m.stationId).filter(Boolean);
-      if (!ids.length || !onSetSelected) return;
-      const selected = store.getState().selectedIds ?? new Set();
-      const anyUnselected = ids.some((id) => !selected.has(id));
-      onSetSelected(ids, anyUnselected);
-    });
-  }
 
   let lastVisibleStations = null;
   let lastValidStations = []; // 「検索結果に合わせる」ボタン用に、現在描画中の観測所を保持する
@@ -423,9 +405,7 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
   }
 
   /**
-   * 一覧の行がクリックされたとき（またはマーカー自身がクリックされたとき）、
-   * 対応するマーカーを目立たせ、地図の表示範囲をそこへ合わせてポップアップを開く。
-   * クラスタ化されているときは zoomToShowLayer でクラスタを解いてから開く。
+   * 一覧の行がクリックされたとき、対応するマーカーを目立たせて中心に寄せ、ポップアップを開く。
    */
   function focusStation(id) {
     const marker = markerById.get(id);
@@ -438,15 +418,8 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
     marker.setStyle({ radius: 9, weight: 3 });
     selectedMarker = marker;
 
-    const centerAndOpen = () => {
-      map.panTo(marker.getLatLng());
-      marker.openPopup();
-    };
-    if (hasCluster && typeof markerLayer.zoomToShowLayer === "function") {
-      markerLayer.zoomToShowLayer(marker, centerAndOpen);
-    } else {
-      centerAndOpen();
-    }
+    map.panTo(marker.getLatLng());
+    marker.openPopup();
   }
 
   let lastSelectedStationId = null;
