@@ -76,6 +76,7 @@ export function initRegionSelector({ container, regions, hokkaidoSubAreas, stati
   }
 
   function updateAllCheckboxState() {
+    if (!allCheckbox) return; // 「すべて一括選択」は廃止（47都道府県一括のみ）
     const checkedCount = selected.size;
     allCheckbox.checked = totalPrefectureCount > 0 && checkedCount === totalPrefectureCount;
     allCheckbox.indeterminate = checkedCount > 0 && checkedCount < totalPrefectureCount;
@@ -130,24 +131,8 @@ export function initRegionSelector({ container, regions, hokkaidoSubAreas, stati
     `47都道府県一括選択（${japanPrefectureCount}）`
   );
 
-  allCheckbox = document.createElement("input");
-  allCheckbox.type = "checkbox";
-  allCheckbox.className = "region-controls__checkbox";
-  allCheckbox.id = "region-select-all";
-  allCheckbox.addEventListener("change", () => {
-    displayRegions.forEach((region) => setRegionSelected(region, allCheckbox.checked));
-    refreshDerivedStates();
-    emitChange();
-  });
-
-  // 南極（昭和基地）を収録しているため「47都道府県」ではなく「地域」と数える
-  const allLabel = h(
-    "label",
-    { for: "region-select-all", class: "region-controls__label" },
-    `すべて一括選択（全 ${totalPrefectureCount} 地域）`
-  );
-
-  allGroup.append(japanCheckbox, japanLabel, allCheckbox, allLabel);
+  // 「すべて一括選択」は廃止し、「47都道府県一括選択」のみ表示する（南極は個別に選択）
+  allGroup.append(japanCheckbox, japanLabel);
 
   const clearButton = h(
     "button",

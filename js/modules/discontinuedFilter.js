@@ -34,7 +34,7 @@ export function initDiscontinuedFilter({ container, count, initialChecked = fals
   checkbox.checked = initialChecked;
   checkbox.addEventListener("change", () => onChange(checkbox.checked));
 
-  const labelSpan = h("span", {}, ` 廃止済みの観測地点を含めない (${currentCount}件)`);
+  const labelSpan = h("span", {}, ` 廃止済みの観測地点を除外 (${currentCount}件)`);
 
   const label = h(
     "label",
@@ -47,7 +47,7 @@ export function initDiscontinuedFilter({ container, count, initialChecked = fals
   /** 他の絞り込み条件が変わったとき、チェック状態を保ったまま「(件数)」だけ更新する */
   function updateCount(newCount) {
     currentCount = newCount;
-    labelSpan.textContent = ` 廃止済みの観測地点を含めない (${currentCount}件)`;
+    labelSpan.textContent = ` 廃止済みの観測地点を除外 (${currentCount}件)`;
   }
 
   return { updateCount };

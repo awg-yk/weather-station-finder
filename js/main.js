@@ -261,12 +261,12 @@ async function copyTextToClipboard(text) {
 copyColabBtn?.addEventListener("click", async () => {
   const list = effectiveStations(store.getState());
   if (list.length === 0) {
-    flashButton(copyColabBtn, "対象がありません", "Colab用にコピー");
+    flashButton(copyColabBtn, "対象がありません", "1. Colab用にコピー");
     return;
   }
   const csv = stationsToCsv(list, { elementLabelMap, regionLabelMap });
   const ok = await copyTextToClipboard(csv);
-  flashButton(copyColabBtn, ok ? `コピーしました（${list.length}件）` : "コピーに失敗しました", "Colab用にコピー");
+  flashButton(copyColabBtn, ok ? `コピーしました（${list.length}件）` : "コピーに失敗しました", "1. Colab用にコピー");
 });
 
 /** ボタンのラベルを一時的に切り替えて操作結果を知らせる。 */

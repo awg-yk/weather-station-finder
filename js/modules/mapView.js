@@ -306,29 +306,6 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
   let stationById = new Map(); // 除外スタイル更新用に id→station を保持する
   let selectedMarker = null;
 
-  /** ポップアップに「一覧から外す／戻す」トグルボタンを差し込む（除外方式・②）。
-   *  buildPopupHtml（テスト対象の純粋関数）は変更せず、ポップアップを開いたときにDOMへ追加する。 */
-  function attachToggleButton(popupEl, station) {
-    if (!popupEl || !onToggleStation) return;
-    const body = popupEl.querySelector(".map-popup");
-    if (!body) return;
-    const isExcluded = store.getState().excludedIds?.has(station.id);
-    const label = () => (store.getState().excludedIds?.has(station.id) ? "＋ 一覧に戻す" : "✕ 一覧から外す");
-    let btn = body.querySelector(".map-popup__toggle");
-    if (!btn) {
-      btn = document.createElement("button");
-      btn.type = "button";
-      btn.addEventListener("click", () => {
-        onToggleStation(station.id);
-        btn.textContent = label();
-        btn.classList.toggle("is-add", Boolean(store.getState().excludedIds?.has(station.id)));
-      });
-      body.append(btn);
-    }
-    btn.className = "map-popup__toggle" + (isExcluded ? " is-add" : "");
-    btn.textContent = label();
-  }
-
   /** 現在描画中の観測所がすべて収まるように表示範囲を合わせる */
   function fitToRenderedStations({ maxZoom = 9 } = {}) {
     if (lastValidStations.length === 0) return false;
@@ -384,8 +361,12 @@ export function initMapView({ container, store, elementLabelMap, onToggleStation
         fillOpacity: isExcluded ? 0.2 : 0.9,
       });
       marker.bindPopup(buildPopupHtml(station, { elementLabelMap }), { maxWidth: 260 });
-      marker.on("click", () => onSelectStation(station.id));
-      marker.on("popupopen", (e) => attachToggleButton(e.popup.getElement(), station));
+      // ① マーカークリックで、その地点をダウンロード対象から直接「外す／戻す」（未選択は薄いグレー）。
+      //   同時に一覧側の選択状態も同期し、ポップアップで地点情報を確認できる。
+      marker.on("click", () => {
+        onToggleStation?.(station.id);
+        onSelectStation(station.id);
+      });
       markerById.set(station.id, marker);
       stationById.set(station.id, station);
       markerLayer.addLayer(marker);

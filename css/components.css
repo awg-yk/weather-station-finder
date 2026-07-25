@@ -561,9 +561,18 @@
   align-items: center;
   gap: 6px;
   font-size: 12px;
+  font-weight: normal;
   color: var(--color-slate);
   cursor: pointer;
   user-select: none;
+}
+
+/* タイトル内に置いたときは少し離す */
+.panel__title .select-all {
+  margin-left: var(--space-4);
+}
+.panel__title .list-summary {
+  margin-left: var(--space-2);
 }
 
 .select-all input {
