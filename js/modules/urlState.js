@@ -25,8 +25,9 @@ const PARAM_KEYWORD = "q";
 const PARAM_PAGE = "page";
 const PARAM_DISCONTINUED = "discontinued";
 
-// URLを短く保つため、種別名は短いコードで表現する（フェーズ9）
-const STATION_TYPE_TO_CODE = { 気象官署: "kansho", アメダス: "amedas" };
+// URLを短く保つため、種別名は短いコードで表現する（フェーズ9）。
+// コード自体は既存URLとの互換のため「kansho」のまま維持し、表示名だけ「気象台等」に変更している。
+const STATION_TYPE_TO_CODE = { 気象台等: "kansho", アメダス: "amedas" };
 const CODE_TO_STATION_TYPE = Object.fromEntries(
   Object.entries(STATION_TYPE_TO_CODE).map(([type, code]) => [code, type])
 );

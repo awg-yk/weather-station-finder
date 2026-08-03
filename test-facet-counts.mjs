@@ -69,8 +69,8 @@ assert(
   "絞り込み後の観測要素件数は全国の件数より少ない"
 );
 assert(
-  hokkaido.stationTypeCounts.get("気象官署") ===
-    hokkaidoStations.filter((s) => s.stationType === "気象官署").length,
+  hokkaido.stationTypeCounts.get("気象台等") ===
+    hokkaidoStations.filter((s) => s.stationType === "気象台等").length,
   "石狩地域だけ選ぶと種別の件数も石狩地域内の件数になる"
 );
 assert(
@@ -136,7 +136,7 @@ assert(syowa.prefecture === "南極" && syowa.region === "antarctica", "昭和�
 assert(!!data.regions.find((r) => r.id === "antarctica"), "regionsマスタに南極が定義されている");
 assert(syowa.lat < -60 && syowa.lon > 0, "昭和基地の緯度経度が南半球（東経）の値になっている");
 assert(syowa.precNo === "99" && syowa.blockNo === "89532", "気象庁の地点番号（prec_no=99 / block_no=89532）を持つ");
-assert(syowa.stationType === "気象官署", "昭和基地は気象官署として扱う");
+assert(syowa.stationType === "気象台等", "昭和基地は気象台等として扱う");
 assert(
   !syowa.elements.includes("precipitation"),
   "昭和基地は降水量を観測していないため観測要素に含めない"

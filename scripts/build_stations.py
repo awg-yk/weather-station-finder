@@ -34,7 +34,9 @@ data/stations.json（このアプリの観測所マスタ）を再構築する�
      無いため無視する。気象官署（type=="A"）は、積雪センサーの有無に関わらず
      「過去の気象データ検索」で積雪の深さが選択可能なため、常にsnowを含める
      （那覇・南大東・宮古島・石垣島など、降雪の無い地域の気象官署対策）
-  5. type（A〜G）から stationType を単純化する（A=気象官署、それ以外=アメダス）
+  5. type（A〜G）から stationType を単純化する。A=気象官署、B/D/E/F/G=特別地域気象観測所
+     （これらはいずれも「過去の気象データ検索」で気象官署に近い扱いを受けるため、
+     このアプリでは両方まとめて「気象台等」として表示する）、C=アメダス
   6. scripts/extra_stations.json（amedastable.json に載らない観測所。現在は南極・昭和基地のみ）を
      追記し、そこで使われている地方（南極）が regions マスタに無ければ追加する
 
@@ -93,8 +95,14 @@ def elems_to_element_list(elems: str, type_code: str = ""):
     return ids
 
 
+# A=気象官署、B/D/E/F/G=特別地域気象観測所（父島=D、南鳥島=E、富士山=F、秩父別=G等の
+# 単独コードも含む）。いずれも通常のアメダスより観測項目が多い拠点のため、
+# このアプリでは「気象台等」としてまとめて扱う。C=通常のアメダス。
+KANSHO_LIKE_TYPES = {"A", "B", "D", "E", "F", "G"}
+
+
 def station_type_label(type_code: str) -> str:
-    return "気象官署" if type_code == "A" else "アメダス"
+    return "気象台等" if type_code in KANSHO_LIKE_TYPES else "アメダス"
 
 
 def load_extra_stations(path):

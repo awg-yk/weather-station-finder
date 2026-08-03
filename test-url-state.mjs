@@ -28,7 +28,7 @@ assert(full.prefectures.size === 2 && full.prefectures.has("青森県") && full.
 assert(full.elements.size === 2 && full.elements.has("temperature") && full.elements.has("wind"), "観測要素をカンマ区切りで復元");
 assert(full.elementLogic === "OR", "mode=ORを復元");
 assert(
-  full.stationTypes.size === 2 && full.stationTypes.has("気象官署") && full.stationTypes.has("アメダス"),
+  full.stationTypes.size === 2 && full.stationTypes.has("気象台等") && full.stationTypes.has("アメダス"),
   "種別コードを日本語名に復元する"
 );
 assert(full.keyword === "空港", "キーワードを復元");
@@ -36,7 +36,7 @@ assert(full.page === 3, "ページ番号を復元");
 
 const unknownTypeCode = parseStateFromUrl(new URLSearchParams("type=kansho,unknown_code"));
 assert(
-  unknownTypeCode.stationTypes.size === 1 && unknownTypeCode.stationTypes.has("気象官署"),
+  unknownTypeCode.stationTypes.size === 1 && unknownTypeCode.stationTypes.has("気象台等"),
   "未知の種別コードは無視し、既知のものだけ復元する"
 );
 
@@ -72,7 +72,7 @@ const qs = buildQueryString({
   selectedPrefectures: new Set(["東京都"]),
   selectedElements: new Set(["snow"]),
   elementLogic: "OR",
-  selectedStationTypes: new Set(["気象官署"]),
+  selectedStationTypes: new Set(["気象台等"]),
   keyword: "山",
   page: 2,
   includeDiscontinued: true,

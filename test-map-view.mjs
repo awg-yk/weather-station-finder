@@ -17,7 +17,7 @@ function assert(cond, msg) {
 
 // --- getMarkerColor -----------------------------------------------------
 
-assert(getMarkerColor({ stationType: "気象官署" }) === "#1C7C8C", "気象官署はteal色");
+assert(getMarkerColor({ stationType: "気象台等" }) === "#1C7C8C", "気象台等はteal色");
 assert(getMarkerColor({ stationType: "アメダス" }) === "#E8A33D", "アメダスはamber色");
 assert(getMarkerColor({ stationType: "不明種別" }) === "#5B6672", "未知の種別はデフォルト色");
 assert(getMarkerColor({}) === "#5B6672", "stationType未指定でもデフォルト色（例外を投げない）");
@@ -122,7 +122,7 @@ assert(
   hasActiveFilters({
     selectedPrefectures: new Set(),
     selectedElements: new Set(),
-    selectedStationTypes: new Set(["気象官署"]),
+    selectedStationTypes: new Set(["気象台等"]),
     keyword: "",
   }) === true,
   "種別が選択されていればtrue"

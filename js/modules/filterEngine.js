@@ -8,7 +8,7 @@
  * フェーズ3: selectedElements / elementLogic を追加
  *   （AND/OR判定そのものは elementFilter.js の matchesElementFilter に委譲）
  * フェーズ5: keyword（地点名・かな・都道府県のフリーワード検索）を追加
- * フェーズ9: selectedStationTypes（気象官署／アメダス）を追加。プリセット機能の土台。
+ * フェーズ9: selectedStationTypes（気象台等／アメダス）を追加。プリセット機能の土台。
  * フェーズ10: buildFacetCounts を追加。各絞り込みUIの「(件数)」を、他の絞り込み条件を
  *   適用した状態の件数に更新するために使う（例: 北海道だけ選ぶと観測要素側の件数も北海道分になる）。
  */
@@ -61,7 +61,7 @@ export function matchesKeyword(station, keyword) {
   return haystacks.some((v) => typeof v === "string" && v.toLowerCase().includes(needle));
 }
 
-/** 種別（気象官署／アメダス）で絞り込む。未選択（空集合）は常にtrue（絞り込みなし＝regionSelector等と同じ方針） */
+/** 種別（気象台等／アメダス）で絞り込む。未選択（空集合）は常にtrue（絞り込みなし＝regionSelector等と同じ方針） */
 export function matchesTypeFilter(station, selectedStationTypes) {
   if (!selectedStationTypes || selectedStationTypes.size === 0) return true;
   return selectedStationTypes.has(station.stationType);
@@ -107,7 +107,7 @@ export function buildElementCounts(allStations) {
   return counts;
 }
 
-/** 種別（気象官署／アメダス）ごとの観測所数を集計する（種別フィルタUIのカウント表示に使う） */
+/** 種別（気象台等／アメダス）ごとの観測所数を集計する（種別フィルタUIのカウント表示に使う） */
 export function buildStationTypeCounts(allStations) {
   const counts = new Map();
   allStations.forEach((station) => {

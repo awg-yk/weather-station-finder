@@ -32,12 +32,12 @@ assert(lastSelected === null, "初期状態では onChange は呼ばれない");
 const checkboxes = [...container.querySelectorAll('input[type="checkbox"]')];
 assert(checkboxes.length === stationTypes.length, `種別数と同じ数のチェックボックスが描画される (実際: ${checkboxes.length})`);
 
-const kanshoCheckbox = checkboxes.find((cb) => cb.id === "type-気象官署");
-assert(!!kanshoCheckbox, "気象官署のチェックボックスが存在する");
+const kanshoCheckbox = checkboxes.find((cb) => cb.id === "type-気象台等");
+assert(!!kanshoCheckbox, "気象台等のチェックボックスが存在する");
 
 kanshoCheckbox.checked = true;
 kanshoCheckbox.dispatchEvent(new dom.window.Event("change"));
-assert(lastSelected.size === 1 && lastSelected.has("気象官署"), "気象官署をチェックすると選択に追加される");
+assert(lastSelected.size === 1 && lastSelected.has("気象台等"), "気象台等をチェックすると選択に追加される");
 
 const amedasCheckbox = checkboxes.find((cb) => cb.id === "type-アメダス");
 amedasCheckbox.checked = true;
@@ -46,7 +46,7 @@ assert(lastSelected.size === 2, "両方チェックすると2件選択される"
 
 kanshoCheckbox.checked = false;
 kanshoCheckbox.dispatchEvent(new dom.window.Event("change"));
-assert(lastSelected.size === 1 && lastSelected.has("アメダス"), "気象官署を外すとアメダスのみ残る");
+assert(lastSelected.size === 1 && lastSelected.has("アメダス"), "気象台等を外すとアメダスのみ残る");
 
 const clearButton = container.querySelector(".element-controls__clear");
 clearButton.dispatchEvent(new dom.window.Event("click"));
@@ -59,33 +59,33 @@ let lastSelected2 = null;
 const typeFilter = initTypeFilter({
   container,
   stationTypes,
-  stationCounts: new Map([["気象官署", 57], ["アメダス", 1230]]),
-  initialSelected: new Set(["気象官署"]),
+  stationCounts: new Map([["気象台等", 57], ["アメダス", 1230]]),
+  initialSelected: new Set(["気象台等"]),
   onChange: (selected) => {
     lastSelected2 = selected;
   },
 });
-const restoredCheckbox = container.querySelector("#type-気象官署");
+const restoredCheckbox = container.querySelector("#type-気象台等");
 assert(restoredCheckbox.checked === true, "initialSelectedで指定した種別は最初からチェックされている");
 assert(lastSelected2 === null, "再初期化時にも初期状態ではonChangeは呼ばれない");
 
 // --- updateCounts()（他の絞り込みに連動した件数更新。フェーズ10） -----------
 
 assert(
-  container.querySelector("#type-気象官署 + .element-item__label").textContent === "気象官署 (57)",
+  container.querySelector("#type-気象台等 + .element-item__label").textContent === "気象台等 (57)",
   "stationCounts を渡すとラベルに件数が表示される"
 );
 
-typeFilter.updateCounts(new Map([["気象官署", 7], ["アメダス", 219]]));
+typeFilter.updateCounts(new Map([["気象台等", 7], ["アメダス", 219]]));
 assert(
-  container.querySelector("#type-気象官署 + .element-item__label").textContent === "気象官署 (7)",
+  container.querySelector("#type-気象台等 + .element-item__label").textContent === "気象台等 (7)",
   "updateCounts() で件数表示だけが更新される"
 );
 assert(restoredCheckbox.checked === true, "updateCounts() はチェック状態を変えない");
 
 typeFilter.updateCounts(new Map([["アメダス", 219]]));
 assert(
-  container.querySelector("#type-気象官署").parentElement.classList.contains("element-item--empty"),
+  container.querySelector("#type-気象台等").parentElement.classList.contains("element-item--empty"),
   "0件になった種別には element-item--empty が付く"
 );
 
@@ -96,8 +96,8 @@ assert(
   let slotLastSelected = null;
   initTypeFilter({
     container: bodyContainer,
-    stationTypes: ["気象官署", "アメダス"],
-    initialSelected: new Set(["気象官署"]),
+    stationTypes: ["気象台等", "アメダス"],
+    initialSelected: new Set(["気象台等"]),
     clearButtonSlot: headerSlot,
     onChange: (sel) => {
       slotLastSelected = sel;

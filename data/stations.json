@@ -203,7 +203,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "11",
       "blockNo": "47401"
     },
@@ -415,7 +415,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "11",
       "blockNo": "47402"
     },
@@ -747,7 +747,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "12",
       "blockNo": "47407"
     },
@@ -1133,7 +1133,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "13",
       "blockNo": "47404"
     },
@@ -1194,7 +1194,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "13",
       "blockNo": "47406"
     },
@@ -1405,7 +1405,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "14",
       "blockNo": "47412"
     },
@@ -1574,7 +1574,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "15",
       "blockNo": "1674"
     },
@@ -1794,7 +1794,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "15",
       "blockNo": "47413"
     },
@@ -1974,7 +1974,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "16",
       "blockNo": "47411"
     },
@@ -2058,7 +2058,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "16",
       "blockNo": "47433"
     },
@@ -2080,7 +2080,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "16",
       "blockNo": "47421"
     },
@@ -2184,7 +2184,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "17",
       "blockNo": "47405"
     },
@@ -2249,7 +2249,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "17",
       "blockNo": "47435"
     },
@@ -2416,7 +2416,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "17",
       "blockNo": "47409"
     },
@@ -2921,7 +2921,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "18",
       "blockNo": "47420"
     },
@@ -3270,7 +3270,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "19",
       "blockNo": "47418"
     },
@@ -3593,7 +3593,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "20",
       "blockNo": "47417"
     },
@@ -3802,7 +3802,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "20",
       "blockNo": "47440"
     },
@@ -3928,7 +3928,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "21",
       "blockNo": "47424"
     },
@@ -4092,7 +4092,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "21",
       "blockNo": "47423"
     },
@@ -4295,7 +4295,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "22",
       "blockNo": "47426"
     },
@@ -4499,7 +4499,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "23",
       "blockNo": "47430"
     },
@@ -4779,7 +4779,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "24",
       "blockNo": "47428"
     },
@@ -4857,7 +4857,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "31",
       "blockNo": "47576"
     },
@@ -5008,7 +5008,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "31",
       "blockNo": "47575"
     },
@@ -5149,7 +5149,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "31",
       "blockNo": "47574"
     },
@@ -5330,7 +5330,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "31",
       "blockNo": "47581"
     },
@@ -5791,7 +5791,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "32",
       "blockNo": "47582"
     },
@@ -6584,7 +6584,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "33",
       "blockNo": "47584"
     },
@@ -6628,7 +6628,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "33",
       "blockNo": "47585"
     },
@@ -7062,7 +7062,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "33",
       "blockNo": "47512"
     },
@@ -7387,7 +7387,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "34",
       "blockNo": "47592"
     },
@@ -7473,7 +7473,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "34",
       "blockNo": "47590"
     },
@@ -7638,7 +7638,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "35",
       "blockNo": "47587"
     },
@@ -7782,7 +7782,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "35",
       "blockNo": "47520"
     },
@@ -8027,7 +8027,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "35",
       "blockNo": "47588"
     },
@@ -8255,7 +8255,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "36",
       "blockNo": "47595"
     },
@@ -8482,7 +8482,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "36",
       "blockNo": "47570"
     },
@@ -8806,7 +8806,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "36",
       "blockNo": "47597"
     },
@@ -8946,7 +8946,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "36",
       "blockNo": "47598"
     },
@@ -9158,7 +9158,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "40",
       "blockNo": "47629"
     },
@@ -9524,7 +9524,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "41",
       "blockNo": "47690"
     },
@@ -9664,7 +9664,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "41",
       "blockNo": "47615"
     },
@@ -9963,7 +9963,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "42",
       "blockNo": "47624"
     },
@@ -10166,7 +10166,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "43",
       "blockNo": "47626"
     },
@@ -10260,7 +10260,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "43",
       "blockNo": "47641"
     },
@@ -10557,7 +10557,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "44",
       "blockNo": "47662"
     },
@@ -10618,7 +10618,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "44",
       "blockNo": "47675"
     },
@@ -10713,7 +10713,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "44",
       "blockNo": "47677"
     },
@@ -10772,7 +10772,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "44",
       "blockNo": "47678"
     },
@@ -10810,7 +10810,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "44",
       "blockNo": "47971"
     },
@@ -10848,7 +10848,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "44",
       "blockNo": "47991"
     },
@@ -10990,7 +10990,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "45",
       "blockNo": "47648"
     },
@@ -11033,7 +11033,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "45",
       "blockNo": "47682"
     },
@@ -11193,7 +11193,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "45",
       "blockNo": "47674"
     },
@@ -11214,7 +11214,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "45",
       "blockNo": "47672"
     },
@@ -11325,7 +11325,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "46",
       "blockNo": "47670"
     },
@@ -11567,7 +11567,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "48",
       "blockNo": "47610"
     },
@@ -11751,7 +11751,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "48",
       "blockNo": "47622"
     },
@@ -11790,7 +11790,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "48",
       "blockNo": "47618"
     },
@@ -11928,7 +11928,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "48",
       "blockNo": "47620"
     },
@@ -12259,7 +12259,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "48",
       "blockNo": "47637"
     },
@@ -12399,7 +12399,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "49",
       "blockNo": "47638"
     },
@@ -12539,7 +12539,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "49",
       "blockNo": "47640"
     },
@@ -12617,7 +12617,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "50",
       "blockNo": "47639"
     },
@@ -12718,7 +12718,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "50",
       "blockNo": "47657"
     },
@@ -12836,7 +12836,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "50",
       "blockNo": "47668"
     },
@@ -12892,7 +12892,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "50",
       "blockNo": "47656"
     },
@@ -13019,7 +13019,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "50",
       "blockNo": "47654"
     },
@@ -13160,7 +13160,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "50",
       "blockNo": "47655"
     },
@@ -13181,7 +13181,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "50",
       "blockNo": "47666"
     },
@@ -13313,7 +13313,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "51",
       "blockNo": "47636"
     },
@@ -13551,7 +13551,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "51",
       "blockNo": "47653"
     },
@@ -13711,7 +13711,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "52",
       "blockNo": "47617"
     },
@@ -14174,7 +14174,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "52",
       "blockNo": "47632"
     },
@@ -14271,7 +14271,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "53",
       "blockNo": "47684"
     },
@@ -14313,7 +14313,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "53",
       "blockNo": "47649"
     },
@@ -14352,7 +14352,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "53",
       "blockNo": "47651"
     },
@@ -14563,7 +14563,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "53",
       "blockNo": "47663"
     },
@@ -14720,7 +14720,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "54",
       "blockNo": "47602"
     },
@@ -14806,7 +14806,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "54",
       "blockNo": "47604"
     },
@@ -15221,7 +15221,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "54",
       "blockNo": "47612"
     },
@@ -15581,7 +15581,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "55",
       "blockNo": "47606"
     },
@@ -15603,7 +15603,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "55",
       "blockNo": "47607"
     },
@@ -15821,7 +15821,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "56",
       "blockNo": "47600"
     },
@@ -15981,7 +15981,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "56",
       "blockNo": "47605"
     },
@@ -16180,7 +16180,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "57",
       "blockNo": "47616"
     },
@@ -16320,7 +16320,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "57",
       "blockNo": "47631"
     },
@@ -16523,7 +16523,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "60",
       "blockNo": "47761"
     },
@@ -16724,7 +16724,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "61",
       "blockNo": "47750"
     },
@@ -16912,7 +16912,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "61",
       "blockNo": "47759"
     },
@@ -17050,7 +17050,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "62",
       "blockNo": "47772"
     },
@@ -17229,7 +17229,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "63",
       "blockNo": "47747"
     },
@@ -17488,7 +17488,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "63",
       "blockNo": "47769"
     },
@@ -17630,7 +17630,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "63",
       "blockNo": "47770"
     },
@@ -17672,7 +17672,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "63",
       "blockNo": "47776"
     },
@@ -17715,7 +17715,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "64",
       "blockNo": "47780"
     },
@@ -18020,7 +18020,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "65",
       "blockNo": "47777"
     },
@@ -18292,7 +18292,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "65",
       "blockNo": "47778"
     },
@@ -18456,7 +18456,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "66",
       "blockNo": "47756"
     },
@@ -18700,7 +18700,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "66",
       "blockNo": "47768"
     },
@@ -19258,7 +19258,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "67",
       "blockNo": "47767"
     },
@@ -19301,7 +19301,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "67",
       "blockNo": "47765"
     },
@@ -19385,7 +19385,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "67",
       "blockNo": "47766"
     },
@@ -19445,7 +19445,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "68",
       "blockNo": "47740"
     },
@@ -19548,7 +19548,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "68",
       "blockNo": "47741"
     },
@@ -19782,7 +19782,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "68",
       "blockNo": "47755"
     },
@@ -19981,7 +19981,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "69",
       "blockNo": "47742"
     },
@@ -20085,7 +20085,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "69",
       "blockNo": "47744"
     },
@@ -20146,7 +20146,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "69",
       "blockNo": "47746"
     },
@@ -20339,7 +20339,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "71",
       "blockNo": "47895"
     },
@@ -20521,7 +20521,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "72",
       "blockNo": "47891"
     },
@@ -20542,7 +20542,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "72",
       "blockNo": "47890"
     },
@@ -20802,7 +20802,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "73",
       "blockNo": "47887"
     },
@@ -21032,7 +21032,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "73",
       "blockNo": "47892"
     },
@@ -21227,7 +21227,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "74",
       "blockNo": "47893"
     },
@@ -21440,7 +21440,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "74",
       "blockNo": "47899"
     },
@@ -21520,7 +21520,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "74",
       "blockNo": "47897"
     },
@@ -21579,7 +21579,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "74",
       "blockNo": "47898"
     },
@@ -21621,7 +21621,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "81",
       "blockNo": "47754"
     },
@@ -21816,7 +21816,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "81",
       "blockNo": "47784"
     },
@@ -21939,7 +21939,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "81",
       "blockNo": "47762"
     },
@@ -22137,7 +22137,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "82",
       "blockNo": "47809"
     },
@@ -22180,7 +22180,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "82",
       "blockNo": "47807"
     },
@@ -22555,7 +22555,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "83",
       "blockNo": "47814"
     },
@@ -22619,7 +22619,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "83",
       "blockNo": "47815"
     },
@@ -22817,7 +22817,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "84",
       "blockNo": "47800"
     },
@@ -22897,7 +22897,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "84",
       "blockNo": "47805"
     },
@@ -22939,7 +22939,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "84",
       "blockNo": "47812"
     },
@@ -23056,7 +23056,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "84",
       "blockNo": "47817"
     },
@@ -23077,7 +23077,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "84",
       "blockNo": "47818"
     },
@@ -23119,7 +23119,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "84",
       "blockNo": "47843"
     },
@@ -23278,7 +23278,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "85",
       "blockNo": "47813"
     },
@@ -23466,7 +23466,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "86",
       "blockNo": "47819"
     },
@@ -23777,7 +23777,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "86",
       "blockNo": "47824"
     },
@@ -23853,7 +23853,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "86",
       "blockNo": "47838"
     },
@@ -23988,7 +23988,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "87",
       "blockNo": "47822"
     },
@@ -24242,7 +24242,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "87",
       "blockNo": "47830"
     },
@@ -24303,7 +24303,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "87",
       "blockNo": "47829"
     },
@@ -24341,7 +24341,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "87",
       "blockNo": "47835"
     },
@@ -24383,7 +24383,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "88",
       "blockNo": "47823"
     },
@@ -24601,7 +24601,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "88",
       "blockNo": "47827"
     },
@@ -24782,7 +24782,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "88",
       "blockNo": "47831"
     },
@@ -24883,7 +24883,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "88",
       "blockNo": "47837"
     },
@@ -24944,7 +24944,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "88",
       "blockNo": "47836"
     },
@@ -25094,7 +25094,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "88",
       "blockNo": "47909"
     },
@@ -25195,7 +25195,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "88",
       "blockNo": "47942"
     },
@@ -25235,7 +25235,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "99",
       "blockNo": "89532"
     },
@@ -25366,7 +25366,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "91",
       "blockNo": "47940"
     },
@@ -25423,7 +25423,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "91",
       "blockNo": "47929"
     },
@@ -25521,7 +25521,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "91",
       "blockNo": "47936"
     },
@@ -25602,7 +25602,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "91",
       "blockNo": "47945"
     },
@@ -25662,7 +25662,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "91",
       "blockNo": "47927"
     },
@@ -25778,7 +25778,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "91",
       "blockNo": "47912"
     },
@@ -25816,7 +25816,7 @@
         "sunshine",
         "humidity"
       ],
-      "stationType": "アメダス",
+      "stationType": "気象台等",
       "precNo": "91",
       "blockNo": "47917"
     },
@@ -25838,7 +25838,7 @@
         "snow",
         "humidity"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "91",
       "blockNo": "47918"
     },

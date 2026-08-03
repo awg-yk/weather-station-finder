@@ -1,11 +1,11 @@
 /**
  * typeFilter.js
  * ------------------------------------------------------------
- * 観測所の種別（気象官署／アメダス）で絞り込むチェックボックスUI。
+ * 観測所の種別（気象台等／アメダス）で絞り込むチェックボックスUI。
  *
  *   initTypeFilter({
  *     container: HTMLElement,
- *     stationTypes: string[],                 // 例: ["気象官署", "アメダス"]
+ *     stationTypes: string[],                 // 例: ["気象台等", "アメダス"]
  *     stationCounts?: Map<stationType, number>,
  *     initialSelected?: Set<string>,          // 初期選択（URLクエリ・プリセット復元用）
  *     clearButtonSlot?: HTMLElement,          // 「選択をクリア」の描画先（省略時はパネル本文内。フェーズ23）

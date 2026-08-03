@@ -7,7 +7,7 @@
  * 設計方針:
  *   - store.subscribe() して visibleStations が変わったときだけ再描画する
  *     （ページ切り替えでは visibleStations 自体は変化しないので再描画しない）
- *   - 気象官署／アメダスを色分けしたマーカー（円形マーカー・低コスト）
+ *   - 気象台等／アメダスを色分けしたマーカー（円形マーカー・低コスト）
  *   - 全国選択時は1,000件超になるため Leaflet.markercluster でクラスタリング
  *     （読み込まれていない場合は通常のレイヤーグループにフォールバック）
  *   - ポップアップの中身は buildPopupHtml() として純粋関数に分離し、
@@ -31,7 +31,7 @@
 import { buildJmaStationLink, buildJmaPrefectureLink } from "./exporter.js";
 
 const STATION_TYPE_COLORS = {
-  気象官署: "#1C7C8C", // --color-teal
+  気象台等: "#1C7C8C", // --color-teal
   アメダス: "#E8A33D", // --color-amber
 };
 const DEFAULT_MARKER_COLOR = "#5B6672"; // --color-ink-soft

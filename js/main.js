@@ -170,7 +170,7 @@ function initFilterUIs(data, initialValues) {
     },
   });
 
-  // 選択肢そのもの（気象官署／アメダス）は全観測所から作り、件数だけ絞り込み連動にする
+  // 選択肢そのもの（気象台等／アメダス）は全観測所から作り、件数だけ絞り込み連動にする
   // （件数0の種別も選択肢として残しておくため）
   filterUIs.type = initTypeFilter({
     container: typeFilterContainer,

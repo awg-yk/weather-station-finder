@@ -24,7 +24,7 @@
       "lon": 39.583889,
       "alt": 28,
       "elements": ["temperature", "wind", "sunshine", "snow", "humidity"],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "precNo": "99",
       "blockNo": "89532",
       "_note": [
