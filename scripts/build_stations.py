@@ -31,7 +31,9 @@ data/stations.json（このアプリの観測所マスタ）を再構築する�
   4. elems（8桁: 気温・降水量・風向・風速・日照時間・積雪深・湿度・気圧）から
      このアプリの6要素（temperature/precipitation/wind/snow/humidity/sunshine）を
      導出する。wind は風向・風速のいずれかが1なら有効。気圧はこのアプリの要素に
-     無いため無視する
+     無いため無視する。気象官署（type=="A"）は、積雪センサーの有無に関わらず
+     「過去の気象データ検索」で積雪の深さが選択可能なため、常にsnowを含める
+     （那覇・南大東・宮古島・石垣島など、降雪の無い地域の気象官署対策）
   5. type（A〜G）から stationType を単純化する（A=気象官署、それ以外=アメダス）
   6. scripts/extra_stations.json（amedastable.json に載らない観測所。現在は南極・昭和基地のみ）を
      追記し、そこで使われている地方（南極）が regions マスタに無ければ追加する
@@ -68,7 +70,7 @@ def dms_to_decimal(dm):
     return round(deg + minute / 60, 6)
 
 
-def elems_to_element_list(elems: str):
+def elems_to_element_list(elems: str, type_code: str = ""):
     ids, seen = [], set()
     for i, ch in enumerate(elems):
         target = ELEMS_INDEX_MAP.get(i)
@@ -77,6 +79,17 @@ def elems_to_element_list(elems: str):
         if ch != "0" and target not in seen:  # '1'(観測) or '2'(推定値) を「観測あり」扱い
             ids.append(target)
             seen.add(target)
+    # 気象官署（type=="A"）は、沖縄など降雪が無い地域でも気象庁「過去の気象データ検索」で
+    # 積雪の深さが選択可能（実測は常に0cm等でも観測項目としては存在する）。
+    # amedastable.json の elems は積雪センサーの有無のみを表すため、それだけでは
+    # 那覇・南大東・宮古島・石垣島などが「積雪の観測なし」と誤判定されてしまう。
+    if type_code == "A" and "snow" not in seen:
+        insert_at = len(ids)
+        for j, e in enumerate(ids):
+            if e == "humidity":
+                insert_at = j
+                break
+        ids.insert(insert_at, "snow")
     return ids
 
 
@@ -156,7 +169,7 @@ def main():
             unmatched.append((code, info["kjName"], matched_pref, round(best_dist, 4)))
 
         region_id = pref_to_region.get(matched_pref)
-        elements = elems_to_element_list(info["elems"])
+        elements = elems_to_element_list(info["elems"], info["type"])
 
         stations.append(
             {

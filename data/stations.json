@@ -25518,6 +25518,7 @@
         "precipitation",
         "wind",
         "sunshine",
+        "snow",
         "humidity"
       ],
       "stationType": "気象官署",
@@ -25598,6 +25599,7 @@
         "precipitation",
         "wind",
         "sunshine",
+        "snow",
         "humidity"
       ],
       "stationType": "気象官署",
@@ -25657,6 +25659,7 @@
         "precipitation",
         "wind",
         "sunshine",
+        "snow",
         "humidity"
       ],
       "stationType": "気象官署",
@@ -25832,6 +25835,7 @@
         "precipitation",
         "wind",
         "sunshine",
+        "snow",
         "humidity"
       ],
       "stationType": "気象官署",
