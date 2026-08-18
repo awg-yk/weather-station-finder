@@ -25920,7 +25920,7 @@
         "humidity",
         "sunshine"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "discontinued": true,
       "observedFrom": "1961-01-01",
       "observedTo": "2002-02-28"
@@ -25941,7 +25941,7 @@
         "sunshine",
         "snow"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "discontinued": true,
       "observedFrom": "1961-01-01",
       "observedTo": "1976-12-31",
@@ -25963,7 +25963,7 @@
         "humidity",
         "sunshine"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "discontinued": true,
       "observedFrom": "1961-01-01",
       "observedTo": "1966-12-31"
@@ -25983,7 +25983,7 @@
         "humidity",
         "sunshine"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "discontinued": true,
       "observedFrom": "1961-01-01",
       "observedTo": "1968-12-31"
@@ -26003,7 +26003,7 @@
         "humidity",
         "sunshine"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "discontinued": true,
       "observedFrom": "1961-01-01",
       "observedTo": "1966-12-31"
@@ -26024,7 +26024,7 @@
         "sunshine",
         "snow"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "discontinued": true,
       "observedFrom": "1961-01-01",
       "observedTo": "2001-03-31",
@@ -26046,7 +26046,7 @@
         "humidity",
         "sunshine"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "discontinued": true,
       "observedFrom": "1961-01-01",
       "observedTo": "1966-12-31"
@@ -26066,7 +26066,7 @@
         "humidity",
         "sunshine"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "discontinued": true,
       "observedFrom": "1961-01-01",
       "observedTo": "1962-12-31"
@@ -26087,7 +26087,7 @@
         "sunshine",
         "snow"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "discontinued": true,
       "observedFrom": "1961-01-01",
       "observedTo": "2017-12-11",
@@ -26110,7 +26110,7 @@
         "sunshine",
         "snow"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "discontinued": true,
       "observedFrom": "1961-01-01",
       "observedTo": "2001-03-31",
@@ -26132,7 +26132,7 @@
         "humidity",
         "sunshine"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "discontinued": true,
       "observedFrom": "1961-01-01",
       "observedTo": "1969-12-31"
@@ -26152,7 +26152,7 @@
         "humidity",
         "sunshine"
       ],
-      "stationType": "気象官署",
+      "stationType": "気象台等",
       "discontinued": true,
       "observedFrom": "1961-01-01",
       "observedTo": "1965-12-31"

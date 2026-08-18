@@ -1,9 +1,10 @@
 /**
  * test-map-selection.mjs
  * ------------------------------------------------------------
- * マーカー⇔一覧行の相互連携（フェーズ15）のうち、initMapView() 内部の
- * 「マーカークリック → store.selectedStationId 更新」「store.selectedStationId の
- * 変化 → マーカーのフォーカス（ハイライト・パン・ポップアップ）」を検証する。
+ * マーカー⇔一覧行の相互連携（フェーズ15〜）のうち、initMapView() 内部の
+ * 「マーカークリック → 対象に含める／外すのトグル」「マーカーにカーソルを乗せる →
+ * ポップアップ表示」「store.selectedStationId の変化 → マーカーのフォーカス
+ * （ハイライト・パン・ポップアップ）」を検証する。
  *
  * Leaflet本体は使わず、mapView.js が実際に呼び出すAPIだけを備えた
  * 最小限のフェイクL実装でテストする（本物のLeafletの見た目までは検証しない）。
@@ -45,6 +46,9 @@ class FakeCircleMarker {
   fireClick() {
     this._listeners.click?.();
   }
+  fireMouseOver() {
+    this._listeners.mouseover?.();
+  }
   setStyle(style) {
     this.styleHistory.push(style);
     Object.assign(this.options, style);
@@ -63,6 +67,9 @@ class FakeLayerGroup {
   }
   addLayer(layer) {
     this.layers.push(layer);
+  }
+  hasLayer(layer) {
+    return this.layers.includes(layer);
   }
   clearLayers() {
     this.layers = [];
@@ -91,12 +98,23 @@ function createFakeL({ withCluster }) {
       mouseEventToLatLng: () => ({ lat: 0, lng: 0 }),
       options: { zoomDelta: 1 },
       dragging: { enabled: () => false, enable() {}, disable() {} },
+      // 都道府県ポリゴンを地点マーカーより下に描くためのペイン（フェーズ22）
+      createPane() {},
+      getPane: () => ({ style: {} }),
     }),
     tileLayer: () => ({ addTo: () => {} }),
     circleMarker: (latlng, options) => new FakeCircleMarker(latlng, options),
     layerGroup: () => new FakeLayerGroup(),
     markerClusterGroup: withCluster ? () => new FakeMarkerClusterGroup() : undefined,
-    latLngBounds: () => ({ isValid: () => true }),
+    // pad() は maxBounds（地図の外へパンできる余白）の算出に使われる
+    latLngBounds: () => {
+      const bounds = { isValid: () => true, pad: () => bounds };
+      return bounds;
+    },
+    // 都道府県境界（GeoJSON）まわり。境界データのfetchはテスト環境では失敗するが、
+    // mapView側に .catch があり地図・絞り込みは従来通り動くため、最低限のスタブで足りる
+    svg: () => ({}),
+    geoJSON: () => ({ addTo: () => {} }),
     Control: {
       extend: (def) =>
         class {
@@ -105,7 +123,14 @@ function createFakeL({ withCluster }) {
           }
         },
     },
-    DomUtil: { create: (tag) => document.createElement(tag) },
+    DomUtil: {
+      create: (tag, className, container) => {
+        const el = document.createElement(tag);
+        if (className) el.className = className;
+        if (container) container.appendChild(el);
+        return el;
+      },
+    },
     DomEvent: {
       disableClickPropagation() {},
       on(el, event, handler) {
@@ -155,25 +180,40 @@ const { initMapView } = await import("./js/modules/mapView.js");
     status: "ready",
     allStations: stations,
     visibleStations: stations,
+    // 地域などを選ぶ前は地図に地点を出さない仕様（フェーズ22）のため、
+    // マーカー描画を伴うテストでは絞り込みが効いている状態にしておく
+    selectedPrefectures: new Set(["京都府"]),
     page: 1,
     pageSize: 50,
     selectedStationId: null,
   });
 
-  initMapView({ container, store, elementLabelMap: new Map() });
+  const toggled = [];
+  initMapView({
+    container,
+    store,
+    elementLabelMap: new Map(),
+    onToggleStation: (id) => toggled.push(id),
+  });
   assert(createdMarkers.length === 2, "描画対象の2地点分のマーカーが作られる");
 
+  // マーカークリックは「対象に含める／外す」のトグル（選択＝一覧スクロールはしない）
   createdMarkers[1].fireClick();
-  assert(store.getState().selectedStationId === "A2", "マーカークリックでstore.selectedStationIdがそのマーカーのIDになる");
+  assert(toggled.length === 1 && toggled[0] === "A2", "マーカークリックでそのマーカーのIDがトグルされる");
+  assert(store.getState().selectedStationId === null, "マーカークリックでは selectedStationId は変わらない");
+
+  // カーソルを乗せるとポップアップが開く
+  createdMarkers[1].fireMouseOver();
+  assert(createdMarkers[1].popupOpened === true, "マーカーにカーソルを乗せるとポップアップが開く");
 
   // --- store.selectedStationId の変化でマーカーがフォーカスされる（ハイライト・パン・ポップアップ） ---
-  assert(createdMarkers[1].popupOpened === true, "選択されたマーカーのポップアップが開く");
+  store.setState({ selectedStationId: "A2" });
   assert(
     createdMarkers[1].styleHistory.some((s) => s.radius === 9),
     "選択されたマーカーの見た目がハイライトされる（radius拡大）"
   );
 
-  // 一覧の行クリックを模して、マーカークリック以外の経路でも同じ状態変化が伝播するか確認する
+  // 一覧の行クリックを模して、別の地点に選択が移ったときの挙動を確認する
   store.setState({ selectedStationId: "A1" });
   assert(createdMarkers[0].popupOpened === true, "一覧側からの選択でも対応するマーカーのポップアップが開く");
   assert(
@@ -199,6 +239,9 @@ const { initMapView } = await import("./js/modules/mapView.js");
     status: "ready",
     allStations: stations,
     visibleStations: stations,
+    // 地域などを選ぶ前は地図に地点を出さない仕様（フェーズ22）のため、
+    // マーカー描画を伴うテストでは絞り込みが効いている状態にしておく
+    selectedPrefectures: new Set(["京都府"]),
     page: 1,
     pageSize: 50,
     selectedStationId: null,
@@ -217,6 +260,9 @@ const { initMapView } = await import("./js/modules/mapView.js");
     status: "ready",
     allStations: stations,
     visibleStations: stations,
+    // 地域などを選ぶ前は地図に地点を出さない仕様（フェーズ22）のため、
+    // マーカー描画を伴うテストでは絞り込みが効いている状態にしておく
+    selectedPrefectures: new Set(["京都府"]),
     page: 1,
     pageSize: 50,
     selectedStationId: null,

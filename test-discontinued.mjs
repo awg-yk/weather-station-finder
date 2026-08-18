@@ -75,7 +75,7 @@ const checkbox = container.querySelector("input[type=checkbox]");
 assert(!!checkbox, "チェックボックスが描画される");
 assert(checkbox.checked === false, "初期状態は未チェック（既定で廃止済みを含める。フェーズ21）");
 assert(container.textContent.includes("506"), "件数(506件)がラベルに表示される");
-assert(container.textContent.includes("含めない"), "「含めない」＝除外の向きのラベルが表示される（フェーズ21）");
+assert(container.textContent.includes("除外"), "「除外」＝オプトアウトの向きのラベルが表示される（フェーズ21）");
 
 checkbox.checked = true;
 checkbox.dispatchEvent(new dom.window.Event("change"));

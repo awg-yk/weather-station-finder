@@ -61,12 +61,13 @@ await import("./js/main.js");
 // 初期読み込み（fetch + 各モジュール初期化）が終わるまで少し待つ
 await wait(50);
 
-// --- 初期表示: 1ページ目が50件表示されている ---
+// --- 初期表示: 絞り込む前は一覧を出さず、案内文だけを表示する（フェーズ22） ---
 const rowsInitial = doc.querySelectorAll("#station-table-container tbody tr");
-assert(rowsInitial.length === 50, `初期表示は1ページ目の50件 (実際: ${rowsInitial.length})`);
-
-const paginationButtons = doc.querySelectorAll("#pagination-container .pagination__page");
-assert(paginationButtons.length > 0, "ページネーションのページ番号ボタンが描画されている");
+assert(rowsInitial.length === 0, `絞り込む前は一覧に行を出さない (実際: ${rowsInitial.length})`);
+assert(
+  doc.querySelector("#station-table-container .empty-state") != null,
+  "絞り込む前は代わりに案内文（empty-state）が表示される"
+);
 
 // --- 検索: 「東京」で絞り込む ---
 const searchInput = doc.querySelector("#keyword-search-container .keyword-search__input");
@@ -80,6 +81,9 @@ const rowsAfterSearch = doc.querySelectorAll("#station-table-container tbody tr"
 assert(rowsAfterSearch.length > 0, "「東京」検索でヒットする観測所がある");
 assert(rowsAfterSearch.length < 50, "「東京」検索で全件よりずっと少ない件数に絞り込まれる");
 
+const paginationButtons = doc.querySelectorAll("#pagination-container .pagination__page");
+assert(paginationButtons.length > 0, "検索結果に対してページネーションが描画されている");
+
 const firstRowText = rowsAfterSearch[0].textContent;
 assert(firstRowText.includes("東京") || firstRowText.includes("都"), "絞り込み結果に「東京」関連の文字列が含まれる");
 
@@ -89,11 +93,11 @@ clearBtn.dispatchEvent(new win.Event("click"));
 await wait(300);
 
 const rowsAfterClear = doc.querySelectorAll("#station-table-container tbody tr");
-assert(rowsAfterClear.length === 50, "検索クリア後は1ページ目の50件表示に戻る");
+assert(rowsAfterClear.length === 0, "検索クリア後は絞り込みなしに戻り、一覧は空になる");
 
-// --- 種別フィルタ: 「気象官署」だけに絞り込む -------------------------------
-const kanshoCheckbox = doc.querySelector("#type-filter-container #type-気象官署");
-assert(!!kanshoCheckbox, "種別フィルタに「気象官署」のチェックボックスが描画されている");
+// --- 種別フィルタ: 「気象台等」だけに絞り込む -------------------------------
+const kanshoCheckbox = doc.querySelector("#type-filter-container #type-気象台等");
+assert(!!kanshoCheckbox, "種別フィルタに「気象台等」のチェックボックスが描画されている");
 
 kanshoCheckbox.checked = true;
 kanshoCheckbox.dispatchEvent(new win.Event("change"));
@@ -102,10 +106,10 @@ await wait(50);
 const rowsAfterTypeFilter = [...doc.querySelectorAll("#station-table-container tbody tr")];
 assert(rowsAfterTypeFilter.length > 0, "種別で絞り込んでも観測所が表示される");
 
-// 気象官署56地点 + 南極・昭和基地 = 57地点。既定では廃止済み観測所も母集団に含まれる（フェーズ21）。
+// 既定では廃止済み観測所も母集団に含まれる（フェーズ21）ので、現役＋廃止済みの両方を数える。
 const stationsData = JSON.parse(stationsJson);
 const kanshoCount = [...stationsData.stations, ...stationsData.discontinuedStations].filter(
-  (s) => s.stationType === "気象官署"
+  (s) => s.stationType === "気象台等"
 ).length;
 const statusTextAfterTypeFilter = doc.querySelector("#status-count").textContent;
 assert(
